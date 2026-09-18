@@ -3,6 +3,144 @@ import Card from "../components/Card";
 import Pill from "../components/Pill";
 import EmptyState from "../components/EmptyState";
 
+import { useRef, useState, useEffect } from "react";
+
+function SignaturePad({ label, sigKey, savedSig, onSave }) {
+  const canvasRef = useRef(null);
+  const [drawing, setDrawing] = useState(false);
+  const [hasSig,  setHasSig]  = useState(!!savedSig);
+  const [saved,   setSaved]   = useState(false);
+
+  useEffect(() => {
+    if (savedSig && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext("2d");
+      const img = new Image();
+      img.onload = () => ctx.drawImage(img, 0, 0);
+      img.src = savedSig;
+      setHasSig(true);
+    }
+  }, [savedSig]);
+
+  const getPos = (e, canvas) => {
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    if (e.touches) {
+      return {
+        x: (e.touches[0].clientX - rect.left) * scaleX,
+        y: (e.touches[0].clientY - rect.top) * scaleY,
+      };
+    }
+    return {
+      x: (e.clientX - rect.left) * scaleX,
+      y: (e.clientY - rect.top) * scaleY,
+    };
+  };
+
+  const startDraw = (e) => {
+    e.preventDefault();
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    const pos = getPos(e, canvas);
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
+    setDrawing(true);
+    setHasSig(true);
+    setSaved(false);
+  };
+
+  const draw = (e) => {
+    e.preventDefault();
+    if (!drawing) return;
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    const pos = getPos(e, canvas);
+    ctx.lineWidth = 2.5;
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "#000000";
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+  };
+
+  const endDraw = (e) => {
+    e.preventDefault();
+    setDrawing(false);
+  };
+
+  const clear = () => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    setHasSig(false);
+    setSaved(false);
+    onSave(sigKey, null);
+  };
+
+  const save = () => {
+    const canvas = canvasRef.current;
+    const data = canvas.toDataURL("image/png");
+    onSave(sigKey, data);
+    setSaved(true);
+  };
+
+  return (
+    <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
+      <div style={{ fontSize:12, color:"#8E8E93", fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:4 }}>{label}</div>
+      <canvas
+        ref={canvasRef}
+        width={300} height={120}
+        onMouseDown={startDraw} onMouseMove={draw} onMouseUp={endDraw} onMouseLeave={endDraw}
+        onTouchStart={startDraw} onTouchMove={draw} onTouchEnd={endDraw}
+        style={{
+          width:"100%", height:120, borderRadius:12,
+          border:`1.5px solid ${hasSig ? "#C9A84C" : "#E5E5EA"}`,
+          background:"#FAFAFA", cursor:"crosshair",
+          touchAction:"none",
+        }}
+      />
+      <div style={{ display:"flex", gap:8 }}>
+        {hasSig && (
+          <>
+            <button onClick={clear} style={{ flex:1, padding:"8px", background:"#FF3B3010", color:"#FF3B30", border:"none", borderRadius:10, fontWeight:600, fontSize:12, cursor:"pointer", fontFamily:"inherit" }}>
+              Clear
+            </button>
+            <button onClick={save} style={{ flex:2, padding:"8px", background: saved ? "#34C75920" : "#C9A84C", color: saved ? "#34C759" : "white", border:"none", borderRadius:10, fontWeight:700, fontSize:12, cursor:"pointer", fontFamily:"inherit" }}>
+              {saved ? "✓ Saved" : "Save Signature"}
+            </button>
+          </>
+        )}
+        {!hasSig && (
+          <div style={{ fontSize:12, color:"#8E8E93", textAlign:"center", width:"100%", paddingTop:4 }}>
+            ✍️ Sign above using mouse or finger
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SignatureSection({ reportId }) {
+  const [sigs, setSigs] = useState({ inspector: null, client: null });
+
+  const handleSave = (key, data) => {
+    setSigs(prev => ({ ...prev, [key]: data }));
+  };
+
+  return (
+    <div style={{ background:"white", borderRadius:20, padding:"24px 20px", boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
+      <div style={{ fontSize:13, fontWeight:600, color:"#8E8E93", letterSpacing:0.5, textTransform:"uppercase", marginBottom:20 }}>Signatures</div>
+      <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20 }}>
+        <SignaturePad label="Inspector Signature" sigKey="inspector" savedSig={sigs.inspector} onSave={handleSave}/>
+        <SignaturePad label="Client / Owner Signature" sigKey="client" savedSig={sigs.client} onSave={handleSave}/>
+      </div>
+      <div style={{ fontSize:11, color:"#8E8E93", textAlign:"center", marginTop:16 }}>
+        Signatures are session-only — save or print the report after signing
+      </div>
+    </div>
+  );
+}
+
 export default function Reports({ inspections, loading, reportId, setReportId, nav, isLaptop }) {
   const ri = inspections.find(i => i.id === reportId);
   const pad = isLaptop ? "0 40px" : "0 16px";
@@ -179,18 +317,7 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
           </div>
 
           {/* SIGNATURE */}
-          <div style={{ background:white, borderRadius:20, padding:"24px 20px", boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
-            <div style={{ fontSize:13, fontWeight:600, color:sub, letterSpacing:0.5, textTransform:"uppercase", marginBottom:20 }}>Signatures</div>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:24 }}>
-              {["Inspector","Client / Owner"].map(s=>(
-                <div key={s} style={{ textAlign:"center" }}>
-                  <div style={{ borderBottom:`1.5px solid ${txt}`, marginBottom:10, height:60 }}/>
-                  <div style={{ fontSize:12, color:sub, fontWeight:600 }}>{s}</div>
-                  <div style={{ fontSize:11, color:sub, marginTop:4 }}>Date: ___________</div>
-                </div>
-              ))}
-            </div>
-          </div>
+<SignatureSection reportId={ri.id}/>
         </div>
       </div>
     );

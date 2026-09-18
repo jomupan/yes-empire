@@ -6,11 +6,9 @@ const REMEMBER_KEY = "ye_auth";
 const REMEMBER_DAYS = 30;
 
 export default function useAuth() {
-  const [user, setUser]       = useState(null);
+  const [user,    setUser]    = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError]     = useState("");
 
-  // Check if user is already logged in
   useEffect(() => {
     const saved = localStorage.getItem(REMEMBER_KEY);
     if (saved) {
@@ -25,34 +23,32 @@ export default function useAuth() {
     setLoading(false);
   }, []);
 
-  const login = async (name, pin, remember) => {
-    setError("");
+  // Step 1 — validate PIN, return user but DON'T set state yet
+  const validatePin = async (pin) => {
     try {
       const snap = await getDocs(collection(db, "staff"));
-      const staff = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      const match = staff.find(s =>
-        s.name.toLowerCase() === name.toLowerCase() && s.pin === pin
-      );
-
-      if (!match) {
-        setError("Incorrect name or PIN. Please try again.");
-        return false;
-      }
-
-      const userData = { id: match.id, name: match.name, role: match.role };
-      setUser(userData);
-
-      if (remember) {
-        localStorage.setItem(REMEMBER_KEY, JSON.stringify({
-          user: userData,
-          expiry: Date.now() + REMEMBER_DAYS * 24 * 60 * 60 * 1000
-        }));
-      }
-      return true;
-
+      const staff = snap.docs.map(d => ({ id:d.id, ...d.data() }));
+      const match = staff.find(s => String(s.pin) === String(pin));
+      if (!match) return null;
+      return {
+        id:    match.id,
+        name:  match.name,
+        role:  match.role,
+        photo: match.photo || null,
+      };
     } catch (err) {
-      setError("Something went wrong. Try again.");
-      return false;
+      return null;
+    }
+  };
+
+  // Step 2 — complete login, set user state
+  const completeLogin = (userData, remember) => {
+    setUser(userData);
+    if (remember) {
+      localStorage.setItem(REMEMBER_KEY, JSON.stringify({
+        user:   userData,
+        expiry: Date.now() + REMEMBER_DAYS * 24 * 60 * 60 * 1000
+      }));
     }
   };
 
@@ -61,5 +57,5 @@ export default function useAuth() {
     localStorage.removeItem(REMEMBER_KEY);
   };
 
-  return { user, loading, error, login, logout };
+  return { user, setUser, loading, validatePin, completeLogin, logout };
 }

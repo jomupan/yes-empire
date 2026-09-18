@@ -30,11 +30,25 @@ export default function BottomNav({ page, nav, user, logout, open, setOpen, isLa
             <button onClick={()=>setOpen(false)} style={{ background:"rgba(255,255,255,0.1)", border:"none", borderRadius:10, width:32, height:32, cursor:"pointer", fontSize:14, color:white, display:"flex", alignItems:"center", justifyContent:"center" }}>✕</button>
           )}
         </div>
+
+        {/* USER PROFILE CARD */}
         {user && (
-          <div style={{ marginTop:16, padding:"12px 16px", background:"rgba(255,255,255,0.06)", borderRadius:12 }}>
-            <div style={{ fontSize:12, color:"rgba(255,255,255,0.4)", marginBottom:2 }}>Logged in as</div>
-            <div style={{ fontSize:15, fontWeight:700, color:white }}>{user.name}</div>
-            <div style={{ fontSize:12, color:gold, fontWeight:600, marginTop:2 }}>{user.role}</div>
+          <div
+            onClick={()=>{ nav("profile"); if(!isLaptop) setOpen(false); }}
+            style={{ marginTop:16, padding:"12px 16px", background:"rgba(255,255,255,0.06)", borderRadius:14, cursor:"pointer", display:"flex", alignItems:"center", gap:12, transition:"all 0.15s" }}>
+            {/* AVATAR */}
+            {user.photo ? (
+              <img src={user.photo} alt={user.name} style={{ width:40, height:40, borderRadius:"50%", objectFit:"cover", border:`2px solid ${gold}`, flexShrink:0 }}/>
+            ) : (
+              <div style={{ width:40, height:40, borderRadius:"50%", background:`linear-gradient(135deg,${gold},#E8B84B)`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:14, fontWeight:800, color:white, flexShrink:0 }}>
+                {user.name?.split(" ").map(n=>n[0]).join("").slice(0,2).toUpperCase()}
+              </div>
+            )}
+            <div style={{ flex:1, minWidth:0 }}>
+              <div style={{ fontSize:14, fontWeight:700, color:white, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{user.name}</div>
+              <div style={{ fontSize:11, color:gold, fontWeight:600, marginTop:1 }}>{user.role}</div>
+            </div>
+            <div style={{ color:"rgba(255,255,255,0.3)", fontSize:12 }}>›</div>
           </div>
         )}
       </div>
@@ -63,14 +77,25 @@ export default function BottomNav({ page, nav, user, logout, open, setOpen, isLa
         })}
       </nav>
 
-      {/* LOGOUT */}
-      <div style={{ padding:"16px 24px 32px", borderTop:"1px solid rgba(255,255,255,0.08)" }}>
+      {/* BOTTOM */}
+      <div style={{ padding:"16px 24px 32px", borderTop:"1px solid rgba(255,255,255,0.08)", display:"flex", flexDirection:"column", gap:8 }}>
+        <button onClick={()=>{ nav("profile"); if(!isLaptop) setOpen(false); }} style={{
+          width:"100%", padding:"13px",
+          background:"rgba(255,255,255,0.06)",
+          border:"1px solid rgba(255,255,255,0.1)",
+          borderRadius:14, color:"rgba(255,255,255,0.6)",
+          cursor:"pointer", fontFamily:"inherit",
+          fontSize:14, fontWeight:600,
+          display:"flex", alignItems:"center", gap:8,
+        }}>
+          👤 My Profile
+        </button>
         <button onClick={()=>{ logout(); setOpen(false); }} style={{
-          width:"100%", padding:"14px",
+          width:"100%", padding:"13px",
           background:"#FF3B3015", border:"none",
           borderRadius:14, color:"#FF3B30",
           cursor:"pointer", fontFamily:"inherit",
-          fontSize:15, fontWeight:600, letterSpacing:-0.2,
+          fontSize:14, fontWeight:600,
         }}>
           Sign Out
         </button>
@@ -78,13 +103,10 @@ export default function BottomNav({ page, nav, user, logout, open, setOpen, isLa
     </div>
   );
 
-  // LAPTOP — just render sidebar content directly
   if (isLaptop) return <SidebarContent/>;
 
-  // MOBILE/TABLET — hamburger + slide in
   return (
     <>
-      {/* HAMBURGER BUTTON */}
       <button onClick={()=>setOpen(true)} style={{
         position:"fixed", top:16, left:16, zIndex:150,
         background:"rgba(255,255,255,0.85)",
@@ -101,7 +123,6 @@ export default function BottomNav({ page, nav, user, logout, open, setOpen, isLa
         <span style={{ width:14, height:2, background:black, borderRadius:99, display:"block", alignSelf:"flex-start", marginLeft:12 }}/>
       </button>
 
-      {/* OVERLAY */}
       {open && (
         <div onClick={()=>setOpen(false)} style={{
           position:"fixed", inset:0,
@@ -113,7 +134,6 @@ export default function BottomNav({ page, nav, user, logout, open, setOpen, isLa
         }}/>
       )}
 
-      {/* SLIDE IN MENU */}
       <div style={{
         position:"fixed", top:0, left:0, bottom:0,
         width:300, zIndex:300,
@@ -125,10 +145,7 @@ export default function BottomNav({ page, nav, user, logout, open, setOpen, isLa
       </div>
 
       <style>{`
-        @keyframes fadeIn {
-          from { opacity:0; }
-          to   { opacity:1; }
-        }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
       `}</style>
     </>
   );
