@@ -6,7 +6,7 @@ import Fld from "../components/Fld";
 import EmptyState from "../components/EmptyState";
 import { white, black, gold, txt, sub, bdr, red, green, iosBg, iosSep, SEV, STA, LOCS, CATS } from "../config";
 
-export default function Detail({ inspections, selId, nav, setReportId }) {
+export default function Detail({ inspections, selId, nav, setReportId, isLaptop }) {
   const [showDF,     setShowDF]     = useState(false);
   const [confirmDel, setConfirmDel] = useState(false);
   const [saving,     setSaving]     = useState(false);
@@ -83,19 +83,24 @@ export default function Detail({ inspections, selId, nav, setReportId }) {
     nav("list");
   };
 
+  const pad = isLaptop ? "0 40px" : "0 16px";
+
   return (
     <div style={{ background:iosBg, minHeight:"100vh", paddingBottom:40 }}>
 
       {/* HEADER */}
-      <div style={{ background:white, padding:"72px 24px 20px", borderBottom:`1px solid ${iosSep}`, marginBottom:20 }}>
+      <div style={{ background:white, padding: isLaptop ? "40px 40px 24px" : "72px 24px 20px", borderBottom:`1px solid ${iosSep}`, marginBottom:20 }}>
         <button onClick={()=>nav("list")} style={{ background:"none", border:"none", color:gold, fontSize:16, fontWeight:600, cursor:"pointer", fontFamily:"inherit", padding:0, marginBottom:12, display:"flex", alignItems:"center", gap:4 }}>
           ‹ All Inspections
         </button>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12 }}>
           <div style={{ flex:1, minWidth:0 }}>
-            <div style={{ fontWeight:800, fontSize:24, color:txt, letterSpacing:-0.5, marginBottom:8 }}>{sel.title}</div>
+            <div style={{ fontWeight:800, fontSize: isLaptop ? 30 : 24, color:txt, letterSpacing:-0.5, marginBottom:8 }}>{sel.title}</div>
             <Pill type="insp" value={sel.status}/>
           </div>
+          <button onClick={()=>setConfirmDel(true)} style={{ padding:"10px 16px", background:"#FF3B3015", color:red, border:"none", borderRadius:12, fontWeight:600, fontSize:13, cursor:"pointer", fontFamily:"inherit", flexShrink:0 }}>
+            🗑️ Delete
+          </button>
         </div>
         {defs.length>0&&(
           <div style={{ marginTop:16 }}>
@@ -110,62 +115,102 @@ export default function Detail({ inspections, selId, nav, setReportId }) {
         )}
       </div>
 
-      <div style={{ padding:"0 16px" }}>
+      <div style={{ padding:pad }}>
 
-        {/* INFO CARD */}
-        <div style={{ background:white, borderRadius:20, padding:"20px", marginBottom:16, boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
-          <div style={{ fontSize:13, fontWeight:600, color:sub, letterSpacing:0.5, textTransform:"uppercase", marginBottom:14 }}>Details</div>
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
-            {[
-              {l:"Client",    v:sel.client},
-              {l:"Inspector", v:sel.inspector},
-              {l:"Type",      v:sel.propertyType},
-              {l:"Date",      v:sel.date},
-              {l:"City",      v:sel.city},
-              {l:"State",     v:sel.state},
-            ].map(r=>(
-              <div key={r.l}>
-                <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:3 }}>{r.l}</div>
-                <div style={{ fontSize:14, color:txt, fontWeight:500 }}>{r.v}</div>
+        {/* LAPTOP — 2 column layout */}
+        {isLaptop ? (
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20, marginBottom:24 }}>
+
+            {/* LEFT — Info */}
+            <div style={{ background:white, borderRadius:20, padding:"24px", boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
+              <div style={{ fontSize:13, fontWeight:600, color:sub, letterSpacing:0.5, textTransform:"uppercase", marginBottom:16 }}>Details</div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>
+                {[
+                  {l:"Client",    v:sel.client},
+                  {l:"Inspector", v:sel.inspector},
+                  {l:"Type",      v:sel.propertyType},
+                  {l:"Date",      v:sel.date},
+                  {l:"City",      v:sel.city},
+                  {l:"State",     v:sel.state},
+                ].map(r=>(
+                  <div key={r.l}>
+                    <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:3 }}>{r.l}</div>
+                    <div style={{ fontSize:14, color:txt, fontWeight:500 }}>{r.v}</div>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <div style={{ marginTop:14, paddingTop:14, borderTop:`1px solid ${iosSep}` }}>
-            <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:3 }}>Address</div>
-            <div style={{ fontSize:14, color:txt, fontWeight:500 }}>{sel.address}, {sel.postcode}</div>
-          </div>
-        </div>
+              <div style={{ marginTop:16, paddingTop:16, borderTop:`1px solid ${iosSep}` }}>
+                <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:3 }}>Address</div>
+                <div style={{ fontSize:14, color:txt, fontWeight:500 }}>{sel.address}, {sel.postcode}</div>
+              </div>
+            </div>
 
-        {/* ACTION BUTTONS */}
-        <div style={{ display:"flex", gap:10, marginBottom:24 }}>
-          <button onClick={()=>{setReportId(sel.id);nav("reports");}} style={{ flex:1, padding:"13px", background:white, color:txt, border:"none", borderRadius:14, fontWeight:600, fontSize:14, cursor:"pointer", fontFamily:"inherit", boxShadow:"0 2px 8px rgba(0,0,0,0.08)" }}>
-            📄 Report
-          </button>
-          {unresolved===0&&defs.length>0&&sel.status!=="Completed"&&(
-            <button onClick={markDone} style={{ flex:1, padding:"13px", background:green, color:white, border:"none", borderRadius:14, fontWeight:600, fontSize:14, cursor:"pointer", fontFamily:"inherit", boxShadow:`0 4px 12px ${green}40` }}>
-              ✅ Complete
-            </button>
-          )}
-          <button onClick={()=>setConfirmDel(true)} style={{ padding:"13px 16px", background:"#FF3B3015", color:red, border:"none", borderRadius:14, fontWeight:600, fontSize:14, cursor:"pointer", fontFamily:"inherit" }}>
-            🗑️
-          </button>
-        </div>
+            {/* RIGHT — Actions */}
+            <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+              <button onClick={()=>{setReportId(sel.id);nav("reports");}} style={{ padding:"16px", background:white, color:txt, border:"none", borderRadius:16, fontWeight:600, fontSize:15, cursor:"pointer", fontFamily:"inherit", boxShadow:"0 2px 8px rgba(0,0,0,0.08)", textAlign:"left" }}>
+                📄 View Report
+              </button>
+              {unresolved===0&&defs.length>0&&sel.status!=="Completed"&&(
+                <button onClick={markDone} style={{ padding:"16px", background:green, color:white, border:"none", borderRadius:16, fontWeight:600, fontSize:15, cursor:"pointer", fontFamily:"inherit", boxShadow:`0 4px 12px ${green}40`, textAlign:"left" }}>
+                  ✅ Mark Complete
+                </button>
+              )}
+            </div>
+          </div>
+        ) : (
+
+          // MOBILE
+          <div>
+            <div style={{ background:white, borderRadius:20, padding:"20px", marginBottom:16, boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
+              <div style={{ fontSize:13, fontWeight:600, color:sub, letterSpacing:0.5, textTransform:"uppercase", marginBottom:14 }}>Details</div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+                {[
+                  {l:"Client",    v:sel.client},
+                  {l:"Inspector", v:sel.inspector},
+                  {l:"Type",      v:sel.propertyType},
+                  {l:"Date",      v:sel.date},
+                  {l:"City",      v:sel.city},
+                  {l:"State",     v:sel.state},
+                ].map(r=>(
+                  <div key={r.l}>
+                    <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:3 }}>{r.l}</div>
+                    <div style={{ fontSize:14, color:txt, fontWeight:500 }}>{r.v}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop:14, paddingTop:14, borderTop:`1px solid ${iosSep}` }}>
+                <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:3 }}>Address</div>
+                <div style={{ fontSize:14, color:txt, fontWeight:500 }}>{sel.address}, {sel.postcode}</div>
+              </div>
+            </div>
+            <div style={{ display:"flex", gap:10, marginBottom:24 }}>
+              <button onClick={()=>{setReportId(sel.id);nav("reports");}} style={{ flex:1, padding:"13px", background:white, color:txt, border:"none", borderRadius:14, fontWeight:600, fontSize:14, cursor:"pointer", fontFamily:"inherit", boxShadow:"0 2px 8px rgba(0,0,0,0.08)" }}>
+                📄 Report
+              </button>
+              {unresolved===0&&defs.length>0&&sel.status!=="Completed"&&(
+                <button onClick={markDone} style={{ flex:1, padding:"13px", background:green, color:white, border:"none", borderRadius:14, fontWeight:600, fontSize:14, cursor:"pointer", fontFamily:"inherit", boxShadow:`0 4px 12px ${green}40` }}>
+                  ✅ Complete
+                </button>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* DEFECTS HEADER */}
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14, paddingLeft:4 }}>
-          <div style={{ fontWeight:700, fontSize:20, color:txt, letterSpacing:-0.5 }}>
+          <div style={{ fontWeight:700, fontSize: isLaptop ? 24 : 20, color:txt, letterSpacing:-0.5 }}>
             Defects <span style={{ color:sub, fontWeight:500, fontSize:16 }}>({defs.length})</span>
           </div>
-          <button onClick={()=>setShowDF(true)} style={{ background:gold, color:white, border:"none", padding:"10px 18px", borderRadius:12, fontWeight:700, fontSize:14, cursor:"pointer", fontFamily:"inherit", boxShadow:`0 4px 12px ${gold}40` }}>
-            + Add
+          <button onClick={()=>setShowDF(true)} style={{ background:gold, color:white, border:"none", padding:"10px 20px", borderRadius:12, fontWeight:700, fontSize:14, cursor:"pointer", fontFamily:"inherit", boxShadow:`0 4px 12px ${gold}40` }}>
+            + Add Defect
           </button>
         </div>
 
         {/* DEFECTS LIST */}
         {defs.length===0 ? (
-          <EmptyState icon="🔍" title="No defects yet" desc='Tap "+ Add" to record your first finding'/>
+          <EmptyState icon="🔍" title="No defects yet" desc='Tap "+ Add Defect" to record your first finding'/>
         ) : (
-          <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+          <div style={{ display:"grid", gridTemplateColumns: isLaptop ? "repeat(2,1fr)" : "1fr", gap:12 }}>
             {defs.map(d=>(
               <div key={d.id} style={{ background:white, borderRadius:20, overflow:"hidden", boxShadow:"0 2px 12px rgba(0,0,0,0.06)", borderLeft:`5px solid ${SEV[d.severity]?.bar||"#ccc"}` }}>
                 {d.photo&&(
@@ -205,8 +250,8 @@ export default function Detail({ inspections, selId, nav, setReportId }) {
 
       {/* DELETE MODAL */}
       {confirmDel&&(
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", zIndex:300, display:"flex", alignItems:"flex-end", justifyContent:"center", padding:"0 16px 32px" }}>
-          <div style={{ background:white, borderRadius:20, padding:28, width:"100%", maxWidth:480, boxShadow:"0 24px 60px rgba(0,0,0,0.3)" }}>
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", zIndex:300, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
+          <div style={{ background:white, borderRadius:20, padding:28, width:"100%", maxWidth:400, boxShadow:"0 24px 60px rgba(0,0,0,0.3)" }}>
             <div style={{ fontSize:36, textAlign:"center", marginBottom:12 }}>🗑️</div>
             <div style={{ fontWeight:800, fontSize:20, color:txt, textAlign:"center", marginBottom:8 }}>Delete Inspection?</div>
             <div style={{ fontSize:14, color:sub, textAlign:"center", marginBottom:28, lineHeight:1.6 }}>This will permanently delete this inspection and all defects. Cannot be undone.</div>
@@ -220,23 +265,18 @@ export default function Detail({ inspections, selId, nav, setReportId }) {
 
       {/* ADD DEFECT PANEL */}
       {showDF&&(
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", zIndex:200, display:"flex", alignItems:"flex-end" }} onClick={()=>setShowDF(false)}>
-          <div style={{ width:"100%", maxWidth:480, margin:"0 auto", background:white, borderRadius:"24px 24px 0 0", maxHeight:"90vh", overflow:"hidden", display:"flex", flexDirection:"column" }} onClick={e=>e.stopPropagation()}>
-
-            {/* Handle bar */}
-            <div style={{ display:"flex", justifyContent:"center", padding:"12px 0 0" }}>
-              <div style={{ width:40, height:4, background:iosSep, borderRadius:99 }}/>
-            </div>
-
-            {/* Panel Header */}
-            <div style={{ padding:"16px 24px 16px", borderBottom:`1px solid ${iosSep}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.5)", zIndex:200, display:"flex", alignItems: isLaptop ? "center" : "flex-end", justifyContent:"center", padding: isLaptop ? 40 : 0 }} onClick={()=>setShowDF(false)}>
+          <div style={{ width:"100%", maxWidth: isLaptop ? 560 : 480, background:white, borderRadius: isLaptop ? 24 : "24px 24px 0 0", maxHeight:"90vh", overflow:"hidden", display:"flex", flexDirection:"column" }} onClick={e=>e.stopPropagation()}>
+            {!isLaptop&&(
+              <div style={{ display:"flex", justifyContent:"center", padding:"12px 0 0" }}>
+                <div style={{ width:40, height:4, background:iosSep, borderRadius:99 }}/>
+              </div>
+            )}
+            <div style={{ padding:"20px 24px 16px", borderBottom:`1px solid ${iosSep}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
               <div style={{ fontWeight:800, fontSize:20, color:txt }}>Add Defect</div>
               <button onClick={()=>setShowDF(false)} style={{ background:iosBg, border:"none", color:sub, width:32, height:32, borderRadius:"50%", cursor:"pointer", fontSize:16, display:"flex", alignItems:"center", justifyContent:"center" }}>✕</button>
             </div>
-
-            {/* Panel Body */}
             <div style={{ padding:"20px 24px", display:"flex", flexDirection:"column", gap:16, flex:1, overflowY:"auto" }}>
-
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
                 <Fld label="Location" error={dErr.location}>
                   <select style={sSt("location")} value={dForm.location} onChange={e=>setD("location",e.target.value)}>
@@ -251,7 +291,6 @@ export default function Detail({ inspections, selId, nav, setReportId }) {
                   </select>
                 </Fld>
               </div>
-
               <Fld label="Severity">
                 <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:8 }}>
                   {["Low","Medium","High","Critical"].map(s=>(
@@ -266,11 +305,9 @@ export default function Detail({ inspections, selId, nav, setReportId }) {
                   ))}
                 </div>
               </Fld>
-
               <Fld label="Description" error={dErr.description}>
                 <textarea rows={4} placeholder="Describe the defect clearly..." value={dForm.description} onChange={e=>setD("description",e.target.value)} style={{...iSt("description"),resize:"none",lineHeight:1.6}}/>
               </Fld>
-
               <Fld label="Photo" optional>
                 {dForm.photo?(
                   <div style={{ position:"relative" }}>
@@ -286,15 +323,12 @@ export default function Detail({ inspections, selId, nav, setReportId }) {
                   </label>
                 )}
               </Fld>
-
               {dForm.severity&&SEV[dForm.severity]&&(
                 <div style={{ padding:"12px 16px", borderRadius:12, background:SEV[dForm.severity].bg, borderLeft:`4px solid ${SEV[dForm.severity].bar}`, fontSize:13, color:SEV[dForm.severity].label, fontWeight:600 }}>
                   {dForm.severity==="Critical"?"🚨 Critical — escalate immediately":dForm.severity==="High"?"⚠️ High — resolve within 48h":dForm.severity==="Medium"?"📋 Medium — schedule this week":"✅ Low — routine maintenance"}
                 </div>
               )}
             </div>
-
-            {/* Panel Footer */}
             <div style={{ padding:"16px 24px 40px", borderTop:`1px solid ${iosSep}`, display:"flex", gap:10 }}>
               <button onClick={()=>setShowDF(false)} style={{ flex:1, padding:"15px", background:iosBg, color:sub, border:"none", borderRadius:14, fontWeight:600, fontSize:15, cursor:"pointer", fontFamily:"inherit" }}>Cancel</button>
               <button onClick={addDefect} disabled={saving} style={{ flex:2, padding:"15px", background:gold, color:white, border:"none", borderRadius:14, fontWeight:700, fontSize:15, cursor:"pointer", fontFamily:"inherit", boxShadow:`0 4px 14px ${gold}40`, opacity:saving?0.7:1 }}>

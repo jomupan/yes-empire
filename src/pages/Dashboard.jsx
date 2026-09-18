@@ -1,10 +1,10 @@
-import { gold, goldLight, black, white, txt, sub, iosBg, iosSep, iosCard } from "../config";
+import { gold, black, white, txt, sub, iosBg, iosSep } from "../config";
 import StatCard from "../components/StatCard";
 import Card from "../components/Card";
 import EmptyState from "../components/EmptyState";
 import Pill from "../components/Pill";
 
-export default function Dashboard({ inspections, loading, nav, goDetail, user }) {
+export default function Dashboard({ inspections, loading, nav, goDetail, user, isLaptop }) {
   const totalDef = inspections.reduce((a,i) => a+(i.defects||[]).length, 0);
   const openDef  = inspections.reduce((a,i) => a+(i.defects||[]).filter(d=>d.status==="Open").length, 0);
   const done     = inspections.filter(i=>i.status==="Completed").length;
@@ -16,51 +16,43 @@ export default function Dashboard({ inspections, loading, nav, goDetail, user })
 
       {/* HERO */}
       <div style={{
-        background: `linear-gradient(160deg, ${black} 0%, #1C1C1E 100%)`,
-        padding: "72px 24px 32px",
-        borderRadius: "0 0 32px 32px",
-        marginBottom: 24,
+        background:`linear-gradient(160deg,${black} 0%,#1C1C1E 100%)`,
+        padding: isLaptop ? "40px 40px 32px" : "72px 24px 32px",
+        borderRadius: isLaptop ? "0 0 24px 0" : "0 0 32px 32px",
+        marginBottom:24,
       }}>
-        <div style={{ fontSize:12, color:gold, fontWeight:600, letterSpacing:1.5, textTransform:"uppercase", marginBottom:8 }}>
-          {today}
-        </div>
-        <div style={{ color:white, fontWeight:800, fontSize:30, letterSpacing:-0.8, lineHeight:1.1, marginBottom:4 }}>
+        <div style={{ fontSize:12, color:gold, fontWeight:600, letterSpacing:1.5, textTransform:"uppercase", marginBottom:8 }}>{today}</div>
+        <div style={{ color:white, fontWeight:800, fontSize: isLaptop ? 36 : 30, letterSpacing:-0.8, lineHeight:1.1, marginBottom:4 }}>
           Hello, {user?.name?.split(" ")[0]} 👋
         </div>
-        <div style={{ color:"rgba(255,255,255,0.5)", fontSize:14, marginBottom:28 }}>
-          Here's your inspection overview
-        </div>
-        <div style={{
-          display: "flex", gap: 20,
-          padding: "16px 0",
-          borderTop: "1px solid rgba(255,255,255,0.08)",
-        }}>
+        <div style={{ color:"rgba(255,255,255,0.5)", fontSize:14, marginBottom:28 }}>Here's your inspection overview</div>
+        <div style={{ display:"flex", gap: isLaptop ? 40 : 20, paddingTop:16, borderTop:"1px solid rgba(255,255,255,0.08)" }}>
           {[
             { label:"Inspections", val:inspections.length, color:gold },
             { label:"Completion",  val:`${rate}%`,         color:"#30D158" },
             { label:"Open Issues", val:openDef,            color:"#FF453A" },
           ].map(s=>(
             <div key={s.label} style={{ flex:1, textAlign:"center" }}>
-              <div style={{ color:s.color, fontSize:26, fontWeight:800, letterSpacing:-1, lineHeight:1 }}>{s.val}</div>
+              <div style={{ color:s.color, fontSize: isLaptop ? 32 : 26, fontWeight:800, letterSpacing:-1, lineHeight:1 }}>{s.val}</div>
               <div style={{ color:"rgba(255,255,255,0.4)", fontSize:11, marginTop:5, fontWeight:500 }}>{s.label}</div>
             </div>
           ))}
         </div>
       </div>
 
-      <div style={{ padding:"0 16px" }}>
+      <div style={{ padding: isLaptop ? "0 40px" : "0 16px" }}>
 
         {/* STAT CARDS */}
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12, marginBottom:28 }}>
+        <div style={{ display:"grid", gridTemplateColumns: isLaptop ? "repeat(4,1fr)" : "1fr 1fr", gap:12, marginBottom:28 }}>
           <StatCard label="Inspections"   value={inspections.length} accent={gold}      icon="🏠"/>
           <StatCard label="Completed"     value={done}               accent="#30D158"   icon="✅"/>
           <StatCard label="Total Defects" value={totalDef}           accent="#AF52DE"   icon="🔍"/>
           <StatCard label="Open Issues"   value={openDef}            accent="#FF453A"   icon="⚠️"/>
         </div>
 
-        {/* RECENT SECTION HEADER */}
+        {/* RECENT HEADER */}
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14, paddingLeft:4 }}>
-          <div style={{ fontWeight:700, fontSize:20, color:txt, letterSpacing:-0.5 }}>Recent</div>
+          <div style={{ fontWeight:700, fontSize: isLaptop ? 24 : 20, color:txt, letterSpacing:-0.5 }}>Recent Inspections</div>
           <button onClick={()=>nav("list")} style={{ background:"none", border:"none", color:gold, fontSize:14, fontWeight:600, cursor:"pointer", fontFamily:"inherit" }}>See All</button>
         </div>
 
@@ -70,8 +62,8 @@ export default function Dashboard({ inspections, loading, nav, goDetail, user })
         ) : inspections.length===0 ? (
           <EmptyState icon="🏠" title="No inspections yet" desc="Start your first property inspection" onAction={()=>nav("new")} actionLabel="Start Now"/>
         ) : (
-          <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
-            {inspections.slice(0,3).map(i=>{
+          <div style={{ display:"grid", gridTemplateColumns: isLaptop ? "repeat(3,1fr)" : "1fr", gap:12 }}>
+            {inspections.slice(0, isLaptop ? 6 : 3).map(i=>{
               const defs=i.defects||[];
               const pct=defs.length>0?Math.round((defs.filter(d=>d.status==="Resolved").length/defs.length)*100):0;
               return(
@@ -103,12 +95,15 @@ export default function Dashboard({ inspections, loading, nav, goDetail, user })
 
         {/* START BUTTON */}
         <button onClick={()=>nav("new")} style={{
-          marginTop: 20, width:"100%", padding:"16px",
-          background: gold, color: white, border:"none",
-          borderRadius: 16, fontWeight:700, fontSize:16,
+          marginTop:20,
+          width: isLaptop ? "auto" : "100%",
+          padding: isLaptop ? "16px 40px" : "16px",
+          background:gold, color:white,
+          border:"none", borderRadius:16,
+          fontWeight:700, fontSize:16,
           cursor:"pointer", fontFamily:"inherit",
           letterSpacing:-0.3,
-          boxShadow: `0 8px 24px ${gold}40`,
+          boxShadow:`0 8px 24px ${gold}40`,
           display:"flex", alignItems:"center",
           justifyContent:"center", gap:8,
         }}>

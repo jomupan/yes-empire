@@ -3,8 +3,9 @@ import Card from "../components/Card";
 import Pill from "../components/Pill";
 import EmptyState from "../components/EmptyState";
 
-export default function Reports({ inspections, loading, reportId, setReportId, nav }) {
+export default function Reports({ inspections, loading, reportId, setReportId, nav, isLaptop }) {
   const ri = inspections.find(i => i.id === reportId);
+  const pad = isLaptop ? "0 40px" : "0 16px";
 
   if (reportId && ri) {
     const def = ri.defects||[];
@@ -17,87 +18,140 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
       <div style={{ background:iosBg, minHeight:"100vh", paddingBottom:40 }}>
 
         {/* HEADER */}
-        <div style={{ background:white, padding:"72px 24px 20px", borderBottom:`1px solid ${iosSep}`, marginBottom:20 }}>
+        <div style={{ background:white, padding: isLaptop ? "40px 40px 24px" : "72px 24px 20px", borderBottom:`1px solid ${iosSep}`, marginBottom:20 }}>
           <button onClick={()=>setReportId(null)} style={{ background:"none", border:"none", color:gold, fontSize:16, fontWeight:600, cursor:"pointer", fontFamily:"inherit", padding:0, marginBottom:12, display:"flex", alignItems:"center", gap:4 }}>
             ‹ All Reports
           </button>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ fontSize:12, color:gold, fontWeight:600, letterSpacing:1, textTransform:"uppercase", marginBottom:6 }}>Official Report</div>
-              <div style={{ fontWeight:800, fontSize:22, color:txt, letterSpacing:-0.5, marginBottom:8 }}>{ri.title}</div>
+              <div style={{ fontWeight:800, fontSize: isLaptop ? 30 : 22, color:txt, letterSpacing:-0.5, marginBottom:8 }}>{ri.title}</div>
               <Pill type="insp" value={ri.status}/>
             </div>
-            <button onClick={()=>window.print()} style={{ background:gold, color:white, border:"none", padding:"10px 16px", borderRadius:12, fontWeight:700, fontSize:13, cursor:"pointer", fontFamily:"inherit", boxShadow:`0 4px 12px ${gold}40`, flexShrink:0 }}>
+            <button onClick={()=>window.print()} style={{ background:gold, color:white, border:"none", padding:"12px 20px", borderRadius:12, fontWeight:700, fontSize:14, cursor:"pointer", fontFamily:"inherit", boxShadow:`0 4px 12px ${gold}40`, flexShrink:0 }}>
               🖨️ Print
             </button>
           </div>
         </div>
 
-        <div style={{ padding:"0 16px" }}>
+        <div style={{ padding:pad }}>
 
           {/* COMPANY BADGE */}
-          <div style={{ background:gold, borderRadius:20, padding:"16px 20px", marginBottom:16, display:"flex", alignItems:"center", justifyContent:"space-between", boxShadow:`0 8px 24px ${gold}40` }}>
+          <div style={{ background:gold, borderRadius:20, padding:"20px 24px", marginBottom:20, display:"flex", alignItems:"center", justifyContent:"space-between", boxShadow:`0 8px 24px ${gold}40` }}>
             <div>
-              <div style={{ fontWeight:900, fontSize:16, color:white }}>YES EMPIRE SDN BHD</div>
-              <div style={{ fontSize:12, color:"rgba(255,255,255,0.7)", marginTop:2 }}>Official Defect Inspection Report</div>
+              <div style={{ fontWeight:900, fontSize:18, color:white }}>YES EMPIRE SDN BHD</div>
+              <div style={{ fontSize:13, color:"rgba(255,255,255,0.7)", marginTop:2 }}>Official Defect Inspection Report</div>
             </div>
-            <div style={{ fontWeight:900, fontSize:24, color:white, opacity:0.8 }}>YE</div>
+            <div style={{ fontWeight:900, fontSize:28, color:white, opacity:0.8 }}>YE</div>
           </div>
 
-          {/* CLIENT INFO */}
-          <div style={{ background:white, borderRadius:20, padding:"20px", marginBottom:16, boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
-            <div style={{ fontSize:13, fontWeight:600, color:sub, letterSpacing:0.5, textTransform:"uppercase", marginBottom:14 }}>Client Information</div>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
-              {[
-                {l:"Client",        v:ri.client},
-                {l:"Property Type", v:ri.propertyType},
-                {l:"City",          v:ri.city},
-                {l:"State",         v:ri.state},
-              ].map(r=>(
-                <div key={r.l}>
-                  <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:3 }}>{r.l}</div>
-                  <div style={{ fontSize:14, color:txt, fontWeight:500 }}>{r.v}</div>
+          {/* LAPTOP — 2 column layout */}
+          {isLaptop ? (
+            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20, marginBottom:20 }}>
+              <div style={{ background:white, borderRadius:20, padding:"24px", boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
+                <div style={{ fontSize:13, fontWeight:600, color:sub, letterSpacing:0.5, textTransform:"uppercase", marginBottom:16 }}>Client Information</div>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+                  {[
+                    {l:"Client",        v:ri.client},
+                    {l:"Property Type", v:ri.propertyType},
+                    {l:"City",          v:ri.city},
+                    {l:"State",         v:ri.state},
+                  ].map(r=>(
+                    <div key={r.l}>
+                      <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:3 }}>{r.l}</div>
+                      <div style={{ fontSize:14, color:txt, fontWeight:500 }}>{r.v}</div>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-            <div style={{ marginTop:14, paddingTop:14, borderTop:`1px solid ${iosSep}` }}>
-              <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:3 }}>Address</div>
-              <div style={{ fontSize:14, color:txt, fontWeight:500 }}>{ri.address}, {ri.postcode}</div>
-            </div>
-            <div style={{ marginTop:14, paddingTop:14, borderTop:`1px solid ${iosSep}` }}>
-              <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:3 }}>Inspector</div>
-              <div style={{ fontSize:14, color:txt, fontWeight:500 }}>{ri.inspector} · {ri.date}</div>
-            </div>
-          </div>
-
-          {/* SUMMARY */}
-          <div style={{ background:white, borderRadius:20, padding:"20px", marginBottom:16, boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
-            <div style={{ fontSize:13, fontWeight:600, color:sub, letterSpacing:0.5, textTransform:"uppercase", marginBottom:14 }}>Summary</div>
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:8, marginBottom:16 }}>
-              {[
-                {l:"Total",       v:def.length, c:"#000"},
-                {l:"Open",        v:op,         c:red},
-                {l:"Progress",    v:ip,         c:"#AF52DE"},
-                {l:"Resolved",    v:res,        c:"#34C759"},
-              ].map(s=>(
-                <div key={s.l} style={{ textAlign:"center", padding:"14px 8px", background:iosBg, borderRadius:14 }}>
-                  <div style={{ fontSize:24, fontWeight:800, color:s.c, letterSpacing:-1 }}>{s.v}</div>
-                  <div style={{ fontSize:10, color:sub, marginTop:4, fontWeight:600 }}>{s.l}</div>
+                <div style={{ marginTop:16, paddingTop:16, borderTop:`1px solid ${iosSep}` }}>
+                  <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:3 }}>Address</div>
+                  <div style={{ fontSize:14, color:txt, fontWeight:500 }}>{ri.address}, {ri.postcode}</div>
                 </div>
-              ))}
-            </div>
-            {def.length>0&&(
-              <div>
-                <div style={{ display:"flex", justifyContent:"space-between", marginBottom:8 }}>
-                  <div style={{ fontSize:13, color:sub }}>Resolution Progress</div>
-                  <div style={{ fontSize:13, color:txt, fontWeight:700 }}>{pct}%</div>
-                </div>
-                <div style={{ height:6, background:iosBg, borderRadius:99, overflow:"hidden" }}>
-                  <div style={{ height:"100%", width:`${pct}%`, background:gold, borderRadius:99 }}/>
+                <div style={{ marginTop:14, paddingTop:14, borderTop:`1px solid ${iosSep}` }}>
+                  <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:3 }}>Inspector</div>
+                  <div style={{ fontSize:14, color:txt, fontWeight:500 }}>{ri.inspector} · {ri.date}</div>
                 </div>
               </div>
-            )}
-          </div>
+              <div style={{ background:white, borderRadius:20, padding:"24px", boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
+                <div style={{ fontSize:13, fontWeight:600, color:sub, letterSpacing:0.5, textTransform:"uppercase", marginBottom:16 }}>Summary</div>
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:10, marginBottom:16 }}>
+                  {[
+                    {l:"Total",       v:def.length, c:"#000"},
+                    {l:"Open",        v:op,         c:red},
+                    {l:"In Progress", v:ip,         c:"#AF52DE"},
+                    {l:"Resolved",    v:res,        c:"#34C759"},
+                  ].map(s=>(
+                    <div key={s.l} style={{ textAlign:"center", padding:"16px 8px", background:iosBg, borderRadius:14 }}>
+                      <div style={{ fontSize:28, fontWeight:800, color:s.c, letterSpacing:-1 }}>{s.v}</div>
+                      <div style={{ fontSize:11, color:sub, marginTop:4, fontWeight:600 }}>{s.l}</div>
+                    </div>
+                  ))}
+                </div>
+                {def.length>0&&(
+                  <div>
+                    <div style={{ display:"flex", justifyContent:"space-between", marginBottom:8 }}>
+                      <div style={{ fontSize:13, color:sub }}>Resolution</div>
+                      <div style={{ fontSize:13, color:txt, fontWeight:700 }}>{pct}%</div>
+                    </div>
+                    <div style={{ height:6, background:iosBg, borderRadius:99, overflow:"hidden" }}>
+                      <div style={{ height:"100%", width:`${pct}%`, background:gold, borderRadius:99 }}/>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            // MOBILE
+            <div style={{ marginBottom:16 }}>
+              <div style={{ background:white, borderRadius:20, padding:"20px", marginBottom:16, boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
+                <div style={{ fontSize:13, fontWeight:600, color:sub, letterSpacing:0.5, textTransform:"uppercase", marginBottom:14 }}>Client Information</div>
+                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+                  {[
+                    {l:"Client",        v:ri.client},
+                    {l:"Property Type", v:ri.propertyType},
+                    {l:"City",          v:ri.city},
+                    {l:"State",         v:ri.state},
+                  ].map(r=>(
+                    <div key={r.l}>
+                      <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:3 }}>{r.l}</div>
+                      <div style={{ fontSize:14, color:txt, fontWeight:500 }}>{r.v}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ marginTop:14, paddingTop:14, borderTop:`1px solid ${iosSep}` }}>
+                  <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:3 }}>Address</div>
+                  <div style={{ fontSize:14, color:txt, fontWeight:500 }}>{ri.address}, {ri.postcode}</div>
+                </div>
+              </div>
+              <div style={{ background:white, borderRadius:20, padding:"20px", boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
+                <div style={{ fontSize:13, fontWeight:600, color:sub, letterSpacing:0.5, textTransform:"uppercase", marginBottom:14 }}>Summary</div>
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:8, marginBottom:16 }}>
+                  {[
+                    {l:"Total",    v:def.length, c:"#000"},
+                    {l:"Open",     v:op,         c:red},
+                    {l:"Progress", v:ip,         c:"#AF52DE"},
+                    {l:"Resolved", v:res,        c:"#34C759"},
+                  ].map(s=>(
+                    <div key={s.l} style={{ textAlign:"center", padding:"14px 8px", background:iosBg, borderRadius:14 }}>
+                      <div style={{ fontSize:22, fontWeight:800, color:s.c, letterSpacing:-1 }}>{s.v}</div>
+                      <div style={{ fontSize:10, color:sub, marginTop:4, fontWeight:600 }}>{s.l}</div>
+                    </div>
+                  ))}
+                </div>
+                {def.length>0&&(
+                  <div>
+                    <div style={{ display:"flex", justifyContent:"space-between", marginBottom:8 }}>
+                      <div style={{ fontSize:13, color:sub }}>Resolution Progress</div>
+                      <div style={{ fontSize:13, color:txt, fontWeight:700 }}>{pct}%</div>
+                    </div>
+                    <div style={{ height:6, background:iosBg, borderRadius:99, overflow:"hidden" }}>
+                      <div style={{ height:"100%", width:`${pct}%`, background:gold, borderRadius:99 }}/>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* DEFECTS */}
           <div style={{ marginBottom:24 }}>
@@ -105,7 +159,7 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
             {def.length===0?(
               <div style={{ textAlign:"center", padding:24, color:sub, background:white, borderRadius:16, fontSize:14 }}>No defects recorded.</div>
             ):(
-              <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+              <div style={{ display:"grid", gridTemplateColumns: isLaptop ? "repeat(2,1fr)" : "1fr", gap:12 }}>
                 {def.map((d,idx)=>(
                   <div key={d.id} style={{ background:white, borderRadius:20, overflow:"hidden", boxShadow:"0 2px 12px rgba(0,0,0,0.06)", borderLeft:`5px solid ${SEV[d.severity]?.bar}` }}>
                     {d.photo&&<img src={d.photo} alt="Defect" style={{ width:"100%", height:160, objectFit:"cover" }}/>}
@@ -137,7 +191,6 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
               ))}
             </div>
           </div>
-
         </div>
       </div>
     );
@@ -146,20 +199,17 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
   // REPORTS LIST
   return (
     <div style={{ background:iosBg, minHeight:"100vh", paddingBottom:40 }}>
-
-      {/* HEADER */}
-      <div style={{ background:white, padding:"72px 24px 20px", borderBottom:`1px solid ${iosSep}`, marginBottom:20 }}>
-        <div style={{ fontWeight:800, fontSize:28, color:txt, letterSpacing:-0.8, marginBottom:4 }}>Reports</div>
+      <div style={{ background:white, padding: isLaptop ? "40px 40px 20px" : "72px 24px 20px", borderBottom:`1px solid ${iosSep}`, marginBottom:20 }}>
+        <div style={{ fontWeight:800, fontSize: isLaptop ? 32 : 28, color:txt, letterSpacing:-0.8, marginBottom:4 }}>Reports</div>
         <div style={{ fontSize:14, color:sub }}>View and print inspection reports</div>
       </div>
-
-      <div style={{ padding:"0 16px" }}>
+      <div style={{ padding:pad }}>
         {loading?(
           <div style={{ textAlign:"center", padding:40, color:sub }}>Loading...</div>
         ):inspections.length===0?(
           <EmptyState icon="📄" title="No reports yet" desc="Complete an inspection to generate a report"/>
         ):(
-          <div style={{ display:"flex", flexDirection:"column", gap:12 }}>
+          <div style={{ display:"grid", gridTemplateColumns: isLaptop ? "repeat(3,1fr)" : "1fr", gap:12 }}>
             {inspections.map(i=>(
               <Card key={i.id} style={{ padding:"16px 18px" }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12, marginBottom:12 }}>
@@ -181,7 +231,6 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
           </div>
         )}
       </div>
-
     </div>
   );
 }
