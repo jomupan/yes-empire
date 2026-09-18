@@ -1,4 +1,6 @@
 import { white, gold, txt, sub, iosBg, iosSep, red, SEV } from "../config";
+import { db } from "../firebase";
+import { doc, updateDoc } from "firebase/firestore";
 import Card from "../components/Card";
 import Pill from "../components/Pill";
 import EmptyState from "../components/EmptyState";
@@ -120,22 +122,44 @@ function SignaturePad({ label, sigKey, savedSig, onSave }) {
   );
 }
 
-function SignatureSection({ reportId }) {
-  const [sigs, setSigs] = useState({ inspector: null, client: null });
+function SignatureSection({ reportId, inspections }) {
+  const ri = inspections?.find(i => i.id === reportId);
+  const [sigs, setSigs] = useState({
+    inspector: ri?.signatures?.inspector || null,
+    client:    ri?.signatures?.client    || null,
+  });
+  const [saving, setSaving] = useState(false);
+  const [saved,  setSaved]  = useState(false);
 
-  const handleSave = (key, data) => {
-    setSigs(prev => ({ ...prev, [key]: data }));
+  const handleSave = async (key, data) => {
+    const updated = { ...sigs, [key]: data };
+    setSigs(updated);
+    setSaving(true);
+    try {
+      await updateDoc(doc(db, "inspections", reportId), {
+        signatures: updated
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (err) {
+      console.log("Error saving signature:", err);
+    }
+    setSaving(false);
   };
 
   return (
     <div style={{ background:"white", borderRadius:20, padding:"24px 20px", boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
-      <div style={{ fontSize:13, fontWeight:600, color:"#8E8E93", letterSpacing:0.5, textTransform:"uppercase", marginBottom:20 }}>Signatures</div>
+      <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
+        <div style={{ fontSize:13, fontWeight:600, color:"#8E8E93", letterSpacing:0.5, textTransform:"uppercase" }}>Signatures</div>
+        {saved && <div style={{ fontSize:12, color:"#34C759", fontWeight:600 }}>✓ Saved to Firebase</div>}
+        {saving && <div style={{ fontSize:12, color:"#C9A84C", fontWeight:600 }}>Saving...</div>}
+      </div>
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20 }}>
         <SignaturePad label="Inspector Signature" sigKey="inspector" savedSig={sigs.inspector} onSave={handleSave}/>
         <SignaturePad label="Client / Owner Signature" sigKey="client" savedSig={sigs.client} onSave={handleSave}/>
       </div>
       <div style={{ fontSize:11, color:"#8E8E93", textAlign:"center", marginTop:16 }}>
-        Signatures are session-only — save or print the report after signing
+        Tap "Save Signature" after signing — signatures are saved permanently
       </div>
     </div>
   );
@@ -317,7 +341,7 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
           </div>
 
           {/* SIGNATURE */}
-<SignatureSection reportId={ri.id}/>
+<SignatureSection reportId={ri.id} inspections={inspections}/>
         </div>
       </div>
     );

@@ -46,16 +46,34 @@ useEffect(() => {
   const sSt = (field) => ({ ...iSt(field), appearance:"none" });
 
   // ── Multiple photos ──────────────────────────────────────────────────────────
-  const handlePhotos = (e) => {
-    const files = Array.from(e.target.files);
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (ev) => {
-        setDForm(f => ({...f, photos:[...(f.photos||[]), ev.target.result]}));
+const handlePhotos = (e) => {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        const MAX = 800;
+        let w = img.width;
+        let h = img.height;
+        if (w > h) {
+          if (w > MAX) { h = h*(MAX/w); w = MAX; }
+        } else {
+          if (h > MAX) { w = w*(MAX/h); h = MAX; }
+        }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, w, h);
+        const compressed = canvas.toDataURL("image/jpeg", 0.7);
+        setDForm(f => ({...f, photos:[...(f.photos||[]), compressed]}));
       };
-      reader.readAsDataURL(file);
-    });
-  };
+      img.src = ev.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+};
 
   const removePhoto = (idx) => {
     setDForm(f => ({...f, photos: f.photos.filter((_,i)=>i!==idx)}));
