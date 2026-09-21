@@ -83,7 +83,9 @@ export default function App() {
   if (authLoading) return (
     <div style={{ minHeight:"100vh", background:black, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Inter',-apple-system,sans-serif" }}>
       <div style={{ textAlign:"center" }}>
-        <div style={{ width:56, height:56, background:gold, borderRadius:16, display:"flex", alignItems:"center", justifyContent:"center", fontWeight:900, fontSize:22, color:black, margin:"0 auto 16px" }}>YE</div>
+        <div style={{ width:56, height:32, margin:"0 auto 16px", overflow:"hidden" }}>
+          <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain" }}/>
+        </div>
         <div style={{ color:gold, fontSize:11, fontWeight:700, letterSpacing:3, textTransform:"uppercase" }}>Loading...</div>
       </div>
     </div>
@@ -91,7 +93,7 @@ export default function App() {
 
   // Login screen
   if (!user) return (
-    <div style={{ fontFamily:"'Inter',-apple-system,sans-serif" }}>
+    <div style={{ fontFamily:"'Inter',-apple-system,sans-serif", width:"100%", minHeight:"100vh" }}>
       <Login onValidate={validatePin} onComplete={completeLogin}/>
     </div>
   );
@@ -122,7 +124,7 @@ export default function App() {
           </div>
         </div>
       ) : (
-        <div style={{ maxWidth: screenSize==="tablet" ? 768 : 480, margin:"0 auto", position:"relative" }}>
+        <div style={{ width:"100%", position:"relative" }}>
           <div key={animKey} style={slideStyle}>
             {renderPage()}
           </div>
@@ -136,11 +138,9 @@ export default function App() {
           to   { opacity:1; transform:translateY(0); }
         }
         * { -webkit-tap-highlight-color:transparent; box-sizing:border-box; }
-        body { margin:0; padding:0; background:#F2F2F7; }
+        body { margin:0; padding:0; background:#0A0A0A; }
         input,select,textarea,button { font-family:'Inter',-apple-system,sans-serif; }
-        ::-webkit-scrollbar { width:6px; }
-        ::-webkit-scrollbar-track { background:transparent; }
-        ::-webkit-scrollbar-thumb { background:#C7C7CC; border-radius:99px; }
+        ::-webkit-scrollbar { width:0px; }
         button:active { opacity:0.75; transform:scale(0.98); }
       `}</style>
     </div>
