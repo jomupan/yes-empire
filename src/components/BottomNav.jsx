@@ -1,10 +1,10 @@
 import { black, gold, white, txt, sub, iosBg, iosSep } from "../config";
 
 const NAV = [
-  { icon:"📊", label:"Dashboard", key:"dashboard" },
-  { icon:"➕", label:"New Inspection", key:"new" },
-  { icon:"📋", label:"All Inspections", key:"list" },
-  { icon:"📄", label:"Reports", key:"reports" },
+  { label:"Dashboard", key:"dashboard" },
+  { label:"New Inspection", key:"new" },
+  { label:"All Inspections", key:"list" },
+  { label:"Reports", key:"reports" },
 ];
 
 export default function BottomNav({ page, nav, user, logout, open, setOpen, isLaptop }) {
@@ -61,20 +61,17 @@ export default function BottomNav({ page, nav, user, logout, open, setOpen, isLa
           const active = page === item.key;
           return (
             <button key={item.key} onClick={()=>nav(item.key)} style={{
-              width:"100%", padding:"14px 16px",
-              background: active ? `${gold}18` : "transparent",
-              border:"none", borderRadius:14,
-              cursor:"pointer", fontFamily:"inherit",
-              textAlign:"left", display:"flex",
-              alignItems:"center", gap:14, marginBottom:4,
-              transition:"all 0.15s ease",
-            }}>
-              <span style={{ fontSize:20 }}>{item.icon}</span>
-              <span style={{ fontSize:15, fontWeight: active ? 700 : 500, color: active ? gold : "rgba(255,255,255,0.65)", letterSpacing:-0.2 }}>
-                {item.label}
-              </span>
-              {active && <div style={{ marginLeft:"auto", width:8, height:8, borderRadius:"50%", background:gold }}/>}
-            </button>
+  width:"100%", padding:"13px 16px",
+  background: active ? `${gold}15` : "transparent",
+  border:"none", borderLeft: active ? `3px solid ${gold}` : "3px solid transparent",
+  cursor:"pointer", fontFamily:"inherit",
+  textAlign:"left", display:"block",
+  marginBottom:2, transition:"all 0.15s ease",
+}}>
+  <span style={{ fontSize:13, fontWeight: active ? 700 : 400, color: active ? gold : "rgba(255,255,255,0.55)", letterSpacing:1.5, textTransform:"uppercase" }}>
+    {item.label}
+  </span>
+</button>
           );
         })}
       </nav>

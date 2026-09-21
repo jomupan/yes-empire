@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { gold, txt, sub, iosBg, iosSep, white } from "../config";
+import { gold, txt, sub, iosBg, iosSep, white, black } from "../config";
 import Card from "../components/Card";
 import Pill from "../components/Pill";
 import EmptyState from "../components/EmptyState";
@@ -21,56 +21,59 @@ export default function AllInspections({ inspections, loading, nav, goDetail, is
     <div style={{ background:iosBg, minHeight:"100vh", paddingBottom:40 }}>
 
       {/* HEADER */}
-      <div style={{ background:white, padding: isLaptop ? "40px 40px 20px" : "72px 24px 16px", borderBottom:`1px solid ${iosSep}`, marginBottom:16 }}>
-        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
-          <div>
-            <div style={{ fontWeight:800, fontSize: isLaptop ? 32 : 28, color:txt, letterSpacing:-0.8, marginBottom:4 }}>All Inspections</div>
-            <div style={{ fontSize:14, color:sub }}>{filtered.length} of {inspections.length} shown</div>
-          </div>
-          <button onClick={()=>nav("new")} style={{ background:gold, color:white, border:"none", padding:"12px 24px", borderRadius:14, fontWeight:700, fontSize:14, cursor:"pointer", fontFamily:"inherit", boxShadow:`0 4px 14px ${gold}40` }}>
-            + New
-          </button>
-        </div>
+      <div style={{ background:black, padding: isLaptop?"40px 40px 28px":"72px 24px 24px", marginBottom:1 }}>
+        <div style={{ fontWeight:800, fontSize: isLaptop?32:26, color:white, letterSpacing:-0.8, marginBottom:4 }}>All Inspections</div>
+        <div style={{ fontSize:13, color:"rgba(255,255,255,0.4)", letterSpacing:0.5 }}>{filtered.length} of {inspections.length} records</div>
       </div>
 
       {/* SEARCH + FILTER */}
-      <div style={{ padding: isLaptop ? "0 40px 16px" : "0 16px 16px" }}>
-        <div style={{ display:"flex", gap:12, flexWrap:"wrap", alignItems:"center" }}>
-          <div style={{ position:"relative", flex:1, minWidth:200 }}>
-            <span style={{ position:"absolute", left:14, top:"50%", transform:"translateY(-50%)", fontSize:15, color:sub }}>🔍</span>
+      <div style={{ background:white, borderBottom:`1px solid #E5E5EA`, padding: isLaptop?"16px 40px":"12px 16px" }}>
+        <div style={{ display:"flex", gap:10, flexWrap:"wrap", alignItems:"center" }}>
+          <div style={{ flex:1, minWidth:200, position:"relative" }}>
             <input
               value={search}
               onChange={e=>setSearch(e.target.value)}
               placeholder="Search inspections..."
               style={{
-                width:"100%", padding:"12px 16px 12px 42px",
-                borderRadius:14, border:"none",
-                fontSize:14, fontFamily:"inherit",
-                outline:"none", background:white,
-                boxSizing:"border-box", color:txt,
-                boxShadow:"0 2px 8px rgba(0,0,0,0.06)",
+                width:"100%", padding:"11px 14px",
+                border:"1.5px solid #E5E5EA",
+                borderRadius:0, fontSize:13,
+                fontFamily:"inherit", outline:"none",
+                background:iosBg, color:txt,
+                boxSizing:"border-box", letterSpacing:0.2,
               }}
             />
           </div>
-          <div style={{ display:"flex", gap:8, flexWrap:"wrap" }}>
+          <div style={{ display:"flex", gap:0 }}>
             {["All","Pending","In Progress","Completed"].map(s=>(
               <button key={s} onClick={()=>setStFilter(s)} style={{
-                padding:"10px 16px", borderRadius:99,
-                fontSize:13, fontWeight:600,
-                cursor:"pointer", fontFamily:"inherit",
-                border:"none", whiteSpace:"nowrap",
-                background: stFilter===s ? gold : white,
-                color:       stFilter===s ? white : sub,
-                boxShadow:   stFilter===s ? `0 4px 12px ${gold}40` : "0 2px 8px rgba(0,0,0,0.06)",
-                transition:"all 0.2s ease",
+                padding:"11px 14px", fontSize:11,
+                fontWeight:700, cursor:"pointer",
+                fontFamily:"inherit", whiteSpace:"nowrap",
+                letterSpacing:1, textTransform:"uppercase",
+                border:"none", borderBottom:`2px solid ${stFilter===s?gold:"transparent"}`,
+                background:"none", color: stFilter===s ? gold : sub,
+                transition:"all 0.15s ease",
               }}>{s}</button>
             ))}
           </div>
         </div>
       </div>
 
+      {/* NEW BUTTON */}
+      <div style={{ padding: isLaptop?"16px 40px":"12px 16px", background:white, borderBottom:"1px solid #E5E5EA" }}>
+        <button onClick={()=>nav("new")} style={{
+          padding:"11px 24px", background:black,
+          color:white, border:"none", borderRadius:0,
+          fontWeight:700, fontSize:11, cursor:"pointer",
+          fontFamily:"inherit", letterSpacing:1.5, textTransform:"uppercase",
+        }}>
+          + New Inspection
+        </button>
+      </div>
+
       {/* LIST */}
-      <div style={{ padding:pad }}>
+      <div style={{ padding:pad, paddingTop:16 }}>
         {loading ? (
           <div style={{ textAlign:"center", padding:40, color:sub }}>Loading...</div>
         ) : filtered.length===0 ? (
@@ -82,20 +85,20 @@ export default function AllInspections({ inspections, loading, nav, goDetail, is
             actionLabel="Start Now"
           />
         ) : (
-          <div style={{ display:"grid", gridTemplateColumns: isLaptop ? "repeat(3,1fr)" : "1fr", gap:12 }}>
+          <div style={{ display:"grid", gridTemplateColumns: isLaptop?"repeat(3,1fr)":"1fr", gap:1, background:"#E5E5EA" }}>
             {filtered.map(i=>{
               const defs=i.defects||[];
               const pct=defs.length>0?Math.round((defs.filter(d=>d.status==="Resolved").length/defs.length)*100):0;
               return(
-                <Card key={i.id} onClick={()=>goDetail(i.id)} style={{ padding:"16px 18px" }}>
+                <Card key={i.id} onClick={()=>goDetail(i.id)} style={{ padding:"18px 20px", borderRadius:0 }}>
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12, marginBottom:defs.length>0?12:0 }}>
                     <div style={{ flex:1, minWidth:0 }}>
-                      <div style={{ fontWeight:700, fontSize:15, color:txt, marginBottom:6, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{i.title}</div>
-                      <div style={{ fontSize:13, color:sub, display:"flex", flexWrap:"wrap", gap:"3px 12px" }}>
-                        <span>👤 {i.client}</span>
-                        <span>🏠 {i.propertyType}</span>
-                        <span>📍 {i.city}</span>
-                        <span>📅 {i.date}</span>
+                      <div style={{ fontWeight:700, fontSize:14, color:txt, marginBottom:6, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{i.title}</div>
+                      <div style={{ fontSize:12, color:sub, display:"flex", flexWrap:"wrap", gap:"3px 16px" }}>
+                        <span>{i.client}</span>
+                        <span>{i.propertyType}</span>
+                        <span>{i.city}, {i.state}</span>
+                        <span>{i.date}</span>
                       </div>
                     </div>
                     <Pill type="insp" value={i.status}/>
@@ -103,11 +106,11 @@ export default function AllInspections({ inspections, loading, nav, goDetail, is
                   {defs.length>0&&(
                     <div>
                       <div style={{ display:"flex", justifyContent:"space-between", marginBottom:6 }}>
-                        <div style={{ fontSize:12, color:sub }}>🔍 {defs.length} defect{defs.length!==1?"s":""}</div>
-                        <div style={{ fontSize:12, color:txt, fontWeight:600 }}>{pct}% resolved</div>
+                        <div style={{ fontSize:11, color:sub, letterSpacing:0.5 }}>{defs.length} DEFECT{defs.length!==1?"S":""}</div>
+                        <div style={{ fontSize:11, color:txt, fontWeight:700 }}>{pct}% RESOLVED</div>
                       </div>
-                      <div style={{ height:4, background:iosBg, borderRadius:99, overflow:"hidden" }}>
-                        <div style={{ height:"100%", width:`${pct}%`, background:gold, borderRadius:99, transition:"width 0.4s" }}/>
+                      <div style={{ height:3, background:"#E5E5EA", overflow:"hidden" }}>
+                        <div style={{ height:"100%", width:`${pct}%`, background:gold, transition:"width 0.4s" }}/>
                       </div>
                     </div>
                   )}
