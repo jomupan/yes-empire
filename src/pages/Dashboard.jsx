@@ -85,7 +85,7 @@ export default function Dashboard({ inspections, loading, nav, goDetail, user, i
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ fontWeight:700, fontSize:14, color:txt, marginBottom:6, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{i.title}</div>
                       <div style={{ fontSize:12, color:sub }}>{i.client}</div>
-                      <div style={{ fontSize:12, color:sub, marginTop:2 }}>{i.date}</div>
+                      <div style={{ fontSize:12, color:sub, marginTop:2, opacity:0.7 }}>{i.date}</div>
                     </div>
                     <Pill type="insp" value={i.status}/>
                   </div>

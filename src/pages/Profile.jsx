@@ -50,7 +50,7 @@ export default function Profile({ user, nav, onUpdateUser, isLaptop }) {
     try {
       await updateDoc(doc(db, "staff", user.id), { photo });
       onUpdateUser({ ...user, photo });
-      setSuccess("Profile photo updated! 🎉");
+      setSuccess("Profile photo updated!");
     } catch (err) {
       setError("Failed to update photo. Try again.");
     }
@@ -74,7 +74,7 @@ export default function Profile({ user, nav, onUpdateUser, isLaptop }) {
       onUpdateUser({ ...user, pin: newPin });
       setNewPin("");
       setConfirmPin("");
-      setSuccess("PIN updated successfully! 🎉");
+      setSuccess("PIN updated successfully!");
     } catch (err) {
       setError("Failed to update PIN. Try again.");
     }
@@ -145,7 +145,7 @@ export default function Profile({ user, nav, onUpdateUser, isLaptop }) {
               fontWeight:600, fontSize:13, cursor:"pointer",
               color:txt, display:"inline-flex", alignItems:"center", gap:6,
             }}>
-              📷 Change Photo
+              Change Photo
               <input type="file" accept="image/*" onChange={handlePhoto} style={{ display:"none" }}/>
             </label>
             {photo && photo !== user?.photo && (

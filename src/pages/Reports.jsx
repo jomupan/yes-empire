@@ -196,7 +196,7 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
               <Pill type="insp" value={ri.status}/>
             </div>
             <button onClick={()=>window.print()} style={{ background:gold, color:white, border:"none", padding:"12px 20px", borderRadius:12, fontWeight:700, fontSize:14, cursor:"pointer", fontFamily:"inherit", boxShadow:`0 4px 12px ${gold}40`, flexShrink:0 }}>
-              🖨️ Print
+              Print
             </button>
           </div>
         </div>
@@ -394,9 +394,9 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
                   <div style={{ flex:1, minWidth:0 }}>
                     <div style={{ fontWeight:700, fontSize:15, color:txt, marginBottom:6, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{i.title}</div>
                     <div style={{ fontSize:13, color:sub, display:"flex", flexWrap:"wrap", gap:"3px 12px" }}>
-                      <span>📅 {i.date}</span>
-                      <span>🔍 {(i.defects||[]).length} defect{(i.defects||[]).length!==1?"s":""}</span>
-                      <span>📍 {i.city}</span>
+                      <span>{i.date}</span>
+                      <span>{(i.defects||[]).length} defect{(i.defects||[]).length!==1?"s":""}</span>
+                      <span>{i.city}</span>
                     </div>
                   </div>
                   <Pill type="insp" value={i.status}/>

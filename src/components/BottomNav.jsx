@@ -87,7 +87,7 @@ export default function BottomNav({ page, nav, user, logout, open, setOpen, isLa
           fontSize:14, fontWeight:600,
           display:"flex", alignItems:"center", gap:8,
         }}>
-          👤 My Profile
+         My Profile
         </button>
         <button onClick={()=>{ logout(); setOpen(false); }} style={{
           width:"100%", padding:"13px",

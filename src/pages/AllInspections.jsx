@@ -94,12 +94,11 @@ export default function AllInspections({ inspections, loading, nav, goDetail, is
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12, marginBottom:defs.length>0?12:0 }}>
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ fontWeight:700, fontSize:14, color:txt, marginBottom:6, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{i.title}</div>
-                      <div style={{ fontSize:12, color:sub, display:"flex", flexWrap:"wrap", gap:"3px 16px" }}>
-                        <span>{i.client}</span>
-                        <span>{i.propertyType}</span>
-                        <span>{i.city}, {i.state}</span>
-                        <span>{i.date}</span>
-                      </div>
+                      <div style={{ display:"flex", flexDirection:"column", gap:4 }}>
+  <div style={{ fontSize:12, color:sub }}>{i.client}</div>
+  <div style={{ fontSize:12, color:sub }}>{i.propertyType} · {i.city}, {i.state}</div>
+  <div style={{ fontSize:11, color:sub, opacity:0.7, letterSpacing:0.3 }}>{i.date}</div>
+</div>
                     </div>
                     <Pill type="insp" value={i.status}/>
                   </div>
