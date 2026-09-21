@@ -130,8 +130,8 @@ export default function Login({ onValidate, onComplete }) {
 
         {/* LOGO */}
         <div style={{ marginBottom:40, textAlign:"center" }}>
-          <div style={{ width:120, height:60, overflow:"hidden", margin:"0 auto 20px", display:"flex", alignItems:"center", justifyContent:"center" }}>
-            <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain" }}/>
+          <div style={{ width:160, height:60, overflow:"hidden", margin:"0 auto 20px" }}>
+            <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain", animation:"slideLeftRight 3s ease-in-out infinite" }}/>
           </div>
           <div style={{ color:"rgba(255,255,255,0.4)", fontSize:11, fontWeight:600, letterSpacing:2.5, textTransform:"uppercase" }}>
             Inspection System
@@ -252,7 +252,14 @@ export default function Login({ onValidate, onComplete }) {
           60%{transform:translateX(-10px)}
           80%{transform:translateX(10px)}
         }
-      `}</style>
+        @keyframes slideLeftRight {
+          0%   { transform: translateX(-8px); }
+          50%  { transform: translateX(8px);  }
+          100% { transform: translateX(-8px); }
+        }
+        @keyframes welcomeIn { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes bounce { 0%,100%{transform:translateY(0);opacity:0.4} 50%{transform:translateY(-6px);opacity:1} }
+`     }</style>
     </div>
   );
 }

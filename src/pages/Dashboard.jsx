@@ -1,4 +1,4 @@
-import { gold, black, white, txt, sub, iosBg, iosSep } from "../config";
+import { gold, black, white, txt, sub, iosBg } from "../config";
 import Card from "../components/Card";
 import EmptyState from "../components/EmptyState";
 import Pill from "../components/Pill";
@@ -27,25 +27,22 @@ export default function Dashboard({ inspections, loading, nav, goDetail, user, i
     <div style={{ background:iosBg, minHeight:"100vh", paddingBottom:40 }}>
 
       {/* HERO */}
-      <div style={{
-        background: black,
-        padding: isLaptop ? "40px 40px 32px" : "72px 24px 32px",
-        marginBottom:1,
-      }}>
-        <div style={{ fontSize:11, color:gold, fontWeight:700, letterSpacing:2, textTransform:"uppercase", marginBottom:12 }}>
-          {today}
+      <div style={{ background:black, padding: isLaptop?"40px 40px 32px":"72px 24px 32px", marginBottom:1 }}>
+        <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:16 }}>
+          <div style={{ width:48, height:28, overflow:"hidden", display:"flex", alignItems:"center" }}>
+            <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", objectFit:"contain", animation:"slideLeftRight 3s ease-in-out infinite" }}/>
+          </div>
         </div>
-        <div style={{ color:white, fontWeight:800, fontSize: isLaptop ? 36 : 28, letterSpacing:-0.8, lineHeight:1.1, marginBottom:4 }}>
+        <div style={{ fontSize:11, color:gold, fontWeight:700, letterSpacing:2, textTransform:"uppercase", marginBottom:12 }}>{today}</div>
+        <div style={{ color:white, fontWeight:800, fontSize: isLaptop?36:28, letterSpacing:-0.8, lineHeight:1.1, marginBottom:4 }}>
           Hello, {user?.name?.split(" ")[0]}
         </div>
-        <div style={{ color:"rgba(255,255,255,0.4)", fontSize:14, marginBottom:28 }}>
-          Here is your inspection overview
-        </div>
+        <div style={{ color:"rgba(255,255,255,0.4)", fontSize:14, marginBottom:28 }}>Here is your inspection overview</div>
         <div style={{ display:"flex", gap: isLaptop?40:20, paddingTop:20, borderTop:"1px solid rgba(255,255,255,0.08)" }}>
           {[
-            { label:"Total",       val:inspections.length, color:gold         },
-            { label:"Completion",  val:`${rate}%`,         color:"#30D158"    },
-            { label:"Open Issues", val:openDef,            color:"#FF453A"    },
+            { label:"Total",       val:inspections.length, color:gold      },
+            { label:"Completion",  val:`${rate}%`,         color:"#30D158" },
+            { label:"Open Issues", val:openDef,            color:"#FF453A" },
           ].map(s=>(
             <div key={s.label} style={{ flex:1 }}>
               <div style={{ color:s.color, fontSize: isLaptop?32:26, fontWeight:800, letterSpacing:-1, lineHeight:1 }}>{s.val}</div>
@@ -57,10 +54,10 @@ export default function Dashboard({ inspections, loading, nav, goDetail, user, i
 
       {/* STAT CARDS */}
       <div style={{ display:"grid", gridTemplateColumns: isLaptop?"repeat(4,1fr)":"1fr 1fr", gap:1, background:"#E5E5EA", marginBottom:1 }}>
-        <StatCard label="Inspections"   value={inspections.length} accent={gold}     />
-        <StatCard label="Completed"     value={done}               accent="#30D158"  />
-        <StatCard label="Total Defects" value={totalDef}           accent="#AF52DE"  />
-        <StatCard label="Open Issues"   value={openDef}            accent="#FF453A"  />
+        <StatCard label="Inspections"   value={inspections.length} accent={gold}    />
+        <StatCard label="Completed"     value={done}               accent="#30D158" />
+        <StatCard label="Total Defects" value={totalDef}           accent="#AF52DE" />
+        <StatCard label="Open Issues"   value={openDef}            accent="#FF453A" />
       </div>
 
       {/* RECENT */}
@@ -85,7 +82,7 @@ export default function Dashboard({ inspections, loading, nav, goDetail, user, i
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ fontWeight:700, fontSize:14, color:txt, marginBottom:6, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{i.title}</div>
                       <div style={{ fontSize:12, color:sub }}>{i.client}</div>
-                      <div style={{ fontSize:12, color:sub, marginTop:2, opacity:0.7 }}>{i.date}</div>
+                      <div style={{ fontSize:11, color:sub, marginTop:2, opacity:0.7 }}>{i.date}</div>
                     </div>
                     <Pill type="insp" value={i.status}/>
                   </div>
@@ -95,7 +92,7 @@ export default function Dashboard({ inspections, loading, nav, goDetail, user, i
                         <div style={{ fontSize:11, color:sub, letterSpacing:0.5 }}>{defs.length} DEFECT{defs.length!==1?"S":""}</div>
                         <div style={{ fontSize:11, color:txt, fontWeight:700 }}>{pct}%</div>
                       </div>
-                      <div style={{ height:3, background:"#E5E5EA", borderRadius:0, overflow:"hidden" }}>
+                      <div style={{ height:3, background:"#E5E5EA", overflow:"hidden" }}>
                         <div style={{ height:"100%", width:`${pct}%`, background:gold, transition:"width 0.4s" }}/>
                       </div>
                     </div>
@@ -108,15 +105,21 @@ export default function Dashboard({ inspections, loading, nav, goDetail, user, i
 
         <button onClick={()=>nav("new")} style={{
           marginTop:16, width:"100%", padding:"16px",
-          background:black, color:white,
-          border:"none", borderRadius:0,
-          fontWeight:700, fontSize:13,
-          cursor:"pointer", fontFamily:"inherit",
-          letterSpacing:1.5, textTransform:"uppercase",
+          background:black, color:white, border:"none",
+          fontWeight:700, fontSize:13, cursor:"pointer",
+          fontFamily:"inherit", letterSpacing:1.5, textTransform:"uppercase",
         }}>
           + Start New Inspection
         </button>
       </div>
+
+      <style>{`
+        @keyframes slideLeftRight {
+          0%   { transform: translateX(-6px); }
+          50%  { transform: translateX(6px);  }
+          100% { transform: translateX(-6px); }
+        }
+      `}</style>
     </div>
   );
 }
