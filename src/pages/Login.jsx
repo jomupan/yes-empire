@@ -121,67 +121,66 @@ export default function Login({ onValidate, onComplete }) {
   return (
     <div style={{
       minHeight:"100vh", background:black,
-      display:"flex", alignItems:"center",
+      display:"flex", flexDirection:"column",
       justifyContent:"center",
       fontFamily:"'Inter',-apple-system,sans-serif",
-      padding:"24px",
+      boxSizing:"border-box",
     }}>
-      <div style={{ width:"100%", maxWidth:380, display:"flex", flexDirection:"column", alignItems:"center" }}>
+
+      {/* TOP SECTION */}
+      <div style={{ flex:1, display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", padding:"40px 24px 20px" }}>
 
         {/* LOGO */}
-        <div style={{ marginBottom:40, textAlign:"center" }}>
-          <div style={{ width:160, height:60, overflow:"hidden", margin:"0 auto 20px" }}>
+        <div style={{ marginBottom:24, textAlign:"center" }}>
+          <div style={{ width:140, height:56, overflow:"hidden", margin:"0 auto 16px", display:"flex", alignItems:"center", justifyContent:"center" }}>
             <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain", animation:"slideLeftRight 3s ease-in-out infinite" }}/>
           </div>
-          <div style={{ color:"rgba(255,255,255,0.4)", fontSize:11, fontWeight:600, letterSpacing:2.5, textTransform:"uppercase" }}>
+          <div style={{ color:"rgba(255,255,255,0.35)", fontSize:10, fontWeight:600, letterSpacing:3, textTransform:"uppercase" }}>
             Inspection System
           </div>
         </div>
 
-        {/* CARD */}
-        <div style={{
-          width:"100%",
-          background:"rgba(255,255,255,0.05)",
-          padding:"32px 28px",
-          border:"1px solid rgba(255,255,255,0.08)",
-        }}>
+        {/* TITLE */}
+        <div style={{ textAlign:"center", marginBottom:24 }}>
+          <div style={{ color:white, fontWeight:700, fontSize:18, letterSpacing:-0.3, marginBottom:6 }}>Enter your PIN</div>
+          <div style={{ color:"rgba(255,255,255,0.35)", fontSize:12, letterSpacing:0.5 }}>Your PIN identifies you automatically</div>
+        </div>
 
-          {/* TITLE */}
-          <div style={{ textAlign:"center", marginBottom:28 }}>
-            <div style={{ color:white, fontWeight:700, fontSize:18, letterSpacing:-0.3, marginBottom:6 }}>Enter your PIN</div>
-            <div style={{ color:"rgba(255,255,255,0.35)", fontSize:12, letterSpacing:0.5 }}>Your PIN identifies you automatically</div>
+        {/* PIN DISPLAY */}
+        <div style={{ marginBottom:20, textAlign:"center" }}>
+          <div style={{ display:"flex", gap:12, justifyContent:"center", animation: shake?"shake 0.5s ease":"none" }}>
+            {[0,1,2,3].map(i=>(
+              <div key={i} style={{
+                width:56, height:56,
+                border:`2px solid ${pin.length>i?gold:"rgba(255,255,255,0.12)"}`,
+                background: pin.length>i?`${gold}15`:"transparent",
+                display:"flex", alignItems:"center", justifyContent:"center",
+                fontSize:24, color:gold,
+                transition:"all 0.15s ease",
+              }}>
+                {pin.length>i?"●":""}
+              </div>
+            ))}
           </div>
+        </div>
 
-          {/* PIN DISPLAY */}
-          <div style={{ marginBottom:28, textAlign:"center" }}>
-            <div style={{ display:"flex", gap:12, justifyContent:"center", animation: shake?"shake 0.5s ease":"none" }}>
-              {[0,1,2,3].map(i=>(
-                <div key={i} style={{
-                  width:56, height:56,
-                  border:`2px solid ${pin.length>i?gold:"rgba(255,255,255,0.12)"}`,
-                  background: pin.length>i?`${gold}15`:"transparent",
-                  display:"flex", alignItems:"center", justifyContent:"center",
-                  fontSize:24, color:gold,
-                  transition:"all 0.15s ease",
-                }}>
-                  {pin.length>i?"●":""}
-                </div>
-              ))}
-            </div>
+        {/* ERROR */}
+        {error&&(
+          <div style={{ padding:"11px 20px", background:"rgba(255,59,48,0.1)", fontSize:13, color:"#FF3B30", fontWeight:500, textAlign:"center", marginBottom:12, letterSpacing:0.3, width:"100%", maxWidth:340, boxSizing:"border-box" }}>
+            {error}
           </div>
+        )}
+      </div>
 
-          {/* ERROR */}
-          {error&&(
-            <div style={{ padding:"11px 14px", background:"rgba(255,59,48,0.1)", fontSize:13, color:"#FF3B30", fontWeight:500, textAlign:"center", marginBottom:20, letterSpacing:0.3 }}>
-              {error}
-            </div>
-          )}
+      {/* BOTTOM SECTION — PIN PAD */}
+      <div style={{ background:"rgba(255,255,255,0.04)", borderTop:"1px solid rgba(255,255,255,0.06)", padding:"24px 20px 48px" }}>
+        <div style={{ maxWidth:340, margin:"0 auto" }}>
 
           {/* PIN PAD */}
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:8, marginBottom:20 }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(3,1fr)", gap:8, marginBottom:16 }}>
             {[1,2,3,4,5,6,7,8,9].map(n=>(
               <button key={n} onClick={()=>handlePinPress(String(n))} style={{
-                padding:"17px", background:"rgba(255,255,255,0.06)",
+                padding:"18px", background:"rgba(255,255,255,0.06)",
                 border:"1px solid rgba(255,255,255,0.08)",
                 fontSize:20, fontWeight:600, color:white,
                 cursor:"pointer", fontFamily:"inherit",
@@ -191,13 +190,13 @@ export default function Login({ onValidate, onComplete }) {
             ))}
             <div/>
             <button onClick={()=>handlePinPress("0")} style={{
-              padding:"17px", background:"rgba(255,255,255,0.06)",
+              padding:"18px", background:"rgba(255,255,255,0.06)",
               border:"1px solid rgba(255,255,255,0.08)",
               fontSize:20, fontWeight:600, color:white,
               cursor:"pointer", fontFamily:"inherit",
             }}>0</button>
             <button onClick={handleDelete} style={{
-              padding:"17px", background:"rgba(255,255,255,0.06)",
+              padding:"18px", background:"rgba(255,255,255,0.06)",
               border:"1px solid rgba(255,255,255,0.08)",
               fontSize:20, fontWeight:600, color:"#FF3B30",
               cursor:"pointer", fontFamily:"inherit",
@@ -205,7 +204,7 @@ export default function Login({ onValidate, onComplete }) {
           </div>
 
           {/* REMEMBER ME */}
-          <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:10, cursor:"pointer", marginBottom:20 }} onClick={()=>setRemember(r=>!r)}>
+          <div style={{ display:"flex", alignItems:"center", justifyContent:"center", gap:10, cursor:"pointer", marginBottom:16 }} onClick={()=>setRemember(r=>!r)}>
             <div style={{
               width:18, height:18,
               border:`1.5px solid ${remember?gold:"rgba(255,255,255,0.2)"}`,
@@ -216,11 +215,11 @@ export default function Login({ onValidate, onComplete }) {
             }}>
               {remember?"✓":""}
             </div>
-            <span style={{ fontSize:13, color:"rgba(255,255,255,0.4)", fontWeight:400, letterSpacing:0.3 }}>Remember me for 30 days</span>
+            <span style={{ fontSize:12, color:"rgba(255,255,255,0.35)", fontWeight:400, letterSpacing:0.3 }}>Remember me for 30 days</span>
           </div>
 
           {/* DIVIDER */}
-          <div style={{ borderTop:"1px solid rgba(255,255,255,0.06)", marginBottom:16 }}/>
+          <div style={{ borderTop:"1px solid rgba(255,255,255,0.06)", marginBottom:14 }}/>
 
           {/* REGISTER */}
           <button onClick={()=>setShowReg(true)} style={{
@@ -229,19 +228,20 @@ export default function Login({ onValidate, onComplete }) {
             border:"1px solid rgba(255,255,255,0.1)",
             color:"rgba(255,255,255,0.4)",
             cursor:"pointer", fontFamily:"inherit",
-            fontSize:12, fontWeight:600, letterSpacing:1,
+            fontSize:11, fontWeight:600, letterSpacing:1.5,
             textTransform:"uppercase",
           }}>
             New Staff? Register Here
           </button>
 
         </div>
+      </div>
 
-        {/* FOOTER */}
-        <div style={{ color:"rgba(255,255,255,0.15)", fontSize:11, marginTop:24, textAlign:"center", letterSpacing:1 }}>
-          BENAMORA SDN BHD · INSPECTION SYSTEM
+      {/* FOOTER */}
+      <div style={{ background:black, padding:"12px", textAlign:"center" }}>
+        <div style={{ color:"rgba(255,255,255,0.15)", fontSize:10, letterSpacing:1.5, textTransform:"uppercase" }}>
+          Benamora Sdn Bhd · Inspection System
         </div>
-
       </div>
 
       <style>{`
@@ -259,7 +259,7 @@ export default function Login({ onValidate, onComplete }) {
         }
         @keyframes welcomeIn { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
         @keyframes bounce { 0%,100%{transform:translateY(0);opacity:0.4} 50%{transform:translateY(-6px);opacity:1} }
-`     }</style>
+      `}</style>
     </div>
   );
 }
