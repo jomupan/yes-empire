@@ -81,16 +81,15 @@ export default function Register({ onBack, onSuccess }) {
         {/* HEADER */}
         <div style={{ textAlign:"center", marginBottom:32 }}>
           <div style={{
-            width:72, height:72,
-            background:`linear-gradient(135deg,${gold},#E8B84B)`,
-            borderRadius:20, display:"flex",
-            alignItems:"center", justifyContent:"center",
-            fontWeight:900, fontSize:28, color:white,
-            margin:"0 auto 16px",
-            boxShadow:`0 8px 32px ${gold}50`,
-          }}>YE</div>
-          <div style={{ color:white, fontWeight:800, fontSize:22, letterSpacing:-0.5, marginBottom:4 }}>Create Account</div>
-          <div style={{ color:"rgba(255,255,255,0.4)", fontSize:13 }}>Join Yes Empire Inspection System</div>
+  width:72, height:72,
+  borderRadius:20, overflow:"hidden",
+  margin:"0 auto 16px",
+  boxShadow:`0 8px 32px ${gold}50`,
+}}>
+  <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain", background:"white", padding:"4px" }}/>
+</div>
+<div style={{ color:white, fontWeight:800, fontSize:22, letterSpacing:-0.5, marginBottom:4 }}>Create Account</div>
+<div style={{ color:"rgba(255,255,255,0.4)", fontSize:13 }}>Join Benamora Inspection System</div>
         </div>
 
         {/* FORM CARD */}
@@ -204,7 +203,7 @@ export default function Register({ onBack, onSuccess }) {
         </div>
 
         <div style={{ color:"rgba(255,255,255,0.2)", fontSize:12, marginTop:24, textAlign:"center" }}>
-          Yes Empire Sdn Bhd · Defect Inspection System
+          Benamora · Defect Inspection System
         </div>
       </div>
     </div>

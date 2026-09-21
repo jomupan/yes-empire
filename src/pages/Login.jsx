@@ -130,15 +130,14 @@ export default function Login({ onValidate, onComplete }) {
         <div style={{ marginBottom:40, textAlign:"center" }}>
           <div style={{
             width:88, height:88,
-            background:`linear-gradient(135deg,${gold},#E8B84B)`,
-            borderRadius:26, display:"flex",
-            alignItems:"center", justifyContent:"center",
-            fontWeight:900, fontSize:36, color:white,
+            borderRadius:26, overflow:"hidden",
             margin:"0 auto 20px",
             boxShadow:`0 8px 32px ${gold}50`,
-          }}>YE</div>
-          <div style={{ color:white, fontWeight:800, fontSize:26, letterSpacing:-0.5 }}>YES EMPIRE</div>
-          <div style={{ color:gold, fontSize:12, fontWeight:600, letterSpacing:2, textTransform:"uppercase", marginTop:6 }}>Inspection System</div>
+    }}>
+      <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain", background:"white", padding:"4px" }}/>
+    </div>
+    <div style={{ color:white, fontWeight:800, fontSize:26, letterSpacing:-0.5 }}>BENAMORA</div>
+    <div style={{ color:gold, fontSize:12, fontWeight:600, letterSpacing:2, textTransform:"uppercase", marginTop:6 }}>Inspection System</div>
         </div>
 
         {/* CARD */}

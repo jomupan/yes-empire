@@ -22,9 +22,11 @@ export default function BottomNav({ page, nav, user, logout, open, setOpen, isLa
       <div style={{ padding: isLaptop ? "32px 24px 24px" : "56px 24px 24px", borderBottom:"1px solid rgba(255,255,255,0.08)" }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
           <div>
-            <div style={{ width:48, height:48, background:`linear-gradient(135deg,${gold},#E8B84B)`, borderRadius:14, display:"flex", alignItems:"center", justifyContent:"center", fontWeight:900, fontSize:18, color:white, marginBottom:16, boxShadow:`0 4px 16px ${gold}50` }}>YE</div>
-            <div style={{ fontWeight:800, fontSize:20, color:white, letterSpacing:-0.5 }}>YES EMPIRE</div>
-            <div style={{ fontSize:13, color:"rgba(255,255,255,0.4)", marginTop:2 }}>Inspection System</div>
+            <div style={{ width:48, height:48, borderRadius:14, overflow:"hidden", marginBottom:16, boxShadow:`0 4px 16px ${gold}50` }}>
+              <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain", background:"white", padding:"4px" }}/>
+            </div>
+              <div style={{ fontWeight:800, fontSize:20, color:white, letterSpacing:-0.5 }}>BENAMORA</div>
+              <div style={{ fontSize:13, color:"rgba(255,255,255,0.4)", marginTop:2 }}>Inspection System</div>
           </div>
           {!isLaptop && (
             <button onClick={()=>setOpen(false)} style={{ background:"rgba(255,255,255,0.1)", border:"none", borderRadius:10, width:32, height:32, cursor:"pointer", fontSize:14, color:white, display:"flex", alignItems:"center", justifyContent:"center" }}>✕</button>

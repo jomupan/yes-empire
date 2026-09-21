@@ -1,7 +1,7 @@
 // ── iOS Style Colors ───────────────────────────────────────────────────────────
-export const gold       = "#C9A84C";
-export const goldLight  = "#F5E6B8";
-export const goldBg     = "#FFFBF0";
+export const gold       = "#F07C1E";
+export const goldLight  = "#F5A623";
+export const goldBg     = "#FFF5EB";
 export const black      = "#000000";
 export const blackSoft  = "#1C1C1E";
 export const white      = "#FFFFFF";
@@ -23,7 +23,7 @@ export const orange     = "#FF9500";
 
 // Keep old names for compatibility
 export const yellow     = gold;
-export const yellowDark = "#B8942A";
+export const yellowDark = "#D4660A";
 export const yellowBg   = goldBg;
 export const grayDark   = iosGray;
 export const gray       = iosBg;

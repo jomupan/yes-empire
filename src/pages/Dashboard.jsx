@@ -21,11 +21,16 @@ export default function Dashboard({ inspections, loading, nav, goDetail, user, i
         borderRadius: isLaptop ? "0 0 24px 0" : "0 0 32px 32px",
         marginBottom:24,
       }}>
-        <div style={{ fontSize:12, color:gold, fontWeight:600, letterSpacing:1.5, textTransform:"uppercase", marginBottom:8 }}>{today}</div>
-        <div style={{ color:white, fontWeight:800, fontSize: isLaptop ? 36 : 30, letterSpacing:-0.8, lineHeight:1.1, marginBottom:4 }}>
-          Hello, {user?.name?.split(" ")[0]} 👋
+      <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:16 }}>
+        <div style={{ width:40, height:40, borderRadius:10, overflow:"hidden", boxShadow:`0 4px 12px ${gold}50` }}>
+          <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain", background:"white", padding:"4px" }}/>
         </div>
-        <div style={{ color:"rgba(255,255,255,0.5)", fontSize:14, marginBottom:28 }}>Here's your inspection overview</div>
+         <div style={{ fontSize:12, color:gold, fontWeight:700, letterSpacing:2, textTransform:"uppercase" }}>BENAMORA</div>
+        </div>
+        <div style={{ color:white, fontWeight:800, fontSize: isLaptop ? 36 : 30, letterSpacing:-0.8, lineHeight:1.1, marginBottom:4 }}>
+         Hello, {user?.name?.split(" ")[0]}
+      </div>
+      <div style={{ color:"rgba(255,255,255,0.5)", fontSize:14, marginBottom:28 }}>Here's your inspection overview</div>
         <div style={{ display:"flex", gap: isLaptop ? 40 : 20, paddingTop:16, borderTop:"1px solid rgba(255,255,255,0.08)" }}>
           {[
             { label:"Inspections", val:inspections.length, color:gold },

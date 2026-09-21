@@ -1,11 +1,10 @@
-import { white, gold, txt, sub, iosBg, iosSep, red, SEV } from "../config";
+import { useRef, useState, useEffect } from "react";
 import { db } from "../firebase";
 import { doc, updateDoc } from "firebase/firestore";
+import { white, gold, txt, sub, iosBg, iosSep, red, SEV } from "../config";
 import Card from "../components/Card";
 import Pill from "../components/Pill";
 import EmptyState from "../components/EmptyState";
-
-import { useRef, useState, useEffect } from "react";
 
 function SignaturePad({ label, sigKey, savedSig, onSave }) {
   const canvasRef = useRef(null);
@@ -96,7 +95,7 @@ function SignaturePad({ label, sigKey, savedSig, onSave }) {
         onTouchStart={startDraw} onTouchMove={draw} onTouchEnd={endDraw}
         style={{
           width:"100%", height:120, borderRadius:12,
-          border:`1.5px solid ${hasSig ? "#C9A84C" : "#E5E5EA"}`,
+          border:`1.5px solid ${hasSig ? gold : "#E5E5EA"}`,
           background:"#FAFAFA", cursor:"crosshair",
           touchAction:"none",
         }}
@@ -107,7 +106,7 @@ function SignaturePad({ label, sigKey, savedSig, onSave }) {
             <button onClick={clear} style={{ flex:1, padding:"8px", background:"#FF3B3010", color:"#FF3B30", border:"none", borderRadius:10, fontWeight:600, fontSize:12, cursor:"pointer", fontFamily:"inherit" }}>
               Clear
             </button>
-            <button onClick={save} style={{ flex:2, padding:"8px", background: saved ? "#34C75920" : "#C9A84C", color: saved ? "#34C759" : "white", border:"none", borderRadius:10, fontWeight:700, fontSize:12, cursor:"pointer", fontFamily:"inherit" }}>
+            <button onClick={save} style={{ flex:2, padding:"8px", background: saved ? "#34C75920" : gold, color: saved ? "#34C759" : white, border:"none", borderRadius:10, fontWeight:700, fontSize:12, cursor:"pointer", fontFamily:"inherit" }}>
               {saved ? "✓ Saved" : "Save Signature"}
             </button>
           </>
@@ -148,18 +147,18 @@ function SignatureSection({ reportId, inspections }) {
   };
 
   return (
-    <div style={{ background:"white", borderRadius:20, padding:"24px 20px", boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
+    <div style={{ background:white, borderRadius:20, padding:"24px 20px", boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
         <div style={{ fontSize:13, fontWeight:600, color:"#8E8E93", letterSpacing:0.5, textTransform:"uppercase" }}>Signatures</div>
-        {saved && <div style={{ fontSize:12, color:"#34C759", fontWeight:600 }}>✓ Saved to Firebase</div>}
-        {saving && <div style={{ fontSize:12, color:"#C9A84C", fontWeight:600 }}>Saving...</div>}
+        {saved&&<div style={{ fontSize:12, color:"#34C759", fontWeight:600 }}>✓ Saved!</div>}
+        {saving&&<div style={{ fontSize:12, color:gold, fontWeight:600 }}>Saving...</div>}
       </div>
       <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20 }}>
         <SignaturePad label="Inspector Signature" sigKey="inspector" savedSig={sigs.inspector} onSave={handleSave}/>
         <SignaturePad label="Client / Owner Signature" sigKey="client" savedSig={sigs.client} onSave={handleSave}/>
       </div>
       <div style={{ fontSize:11, color:"#8E8E93", textAlign:"center", marginTop:16 }}>
-        Tap "Save Signature" after signing — signatures are saved permanently
+        Tap "Save Signature" — saved permanently to Firebase
       </div>
     </div>
   );
@@ -175,6 +174,12 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
     const op  = def.filter(d=>d.status==="Open").length;
     const ip  = def.filter(d=>d.status==="In Progress").length;
     const pct = def.length>0 ? Math.round((res/def.length)*100) : 0;
+
+    const getDefectPhotos = (d) => {
+      if (d.photos && d.photos.length>0) return d.photos;
+      if (d.photo) return [d.photo];
+      return [];
+    };
 
     return (
       <div style={{ background:iosBg, minHeight:"100vh", paddingBottom:40 }}>
@@ -201,24 +206,21 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
           {/* COMPANY BADGE */}
           <div style={{ background:gold, borderRadius:20, padding:"20px 24px", marginBottom:20, display:"flex", alignItems:"center", justifyContent:"space-between", boxShadow:`0 8px 24px ${gold}40` }}>
             <div>
-              <div style={{ fontWeight:900, fontSize:18, color:white }}>YES EMPIRE SDN BHD</div>
+              <div style={{ fontWeight:900, fontSize:18, color:white }}>BENAMORA SDN BHD</div>
               <div style={{ fontSize:13, color:"rgba(255,255,255,0.7)", marginTop:2 }}>Official Defect Inspection Report</div>
             </div>
-            <div style={{ fontWeight:900, fontSize:28, color:white, opacity:0.8 }}>YE</div>
+            <div style={{ width:48, height:48, borderRadius:10, overflow:"hidden" }}>
+              <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain", background:"white", padding:"4px" }}/>
+            </div>
           </div>
 
-          {/* LAPTOP — 2 column layout */}
+          {/* CLIENT INFO */}
           {isLaptop ? (
             <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20, marginBottom:20 }}>
               <div style={{ background:white, borderRadius:20, padding:"24px", boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
                 <div style={{ fontSize:13, fontWeight:600, color:sub, letterSpacing:0.5, textTransform:"uppercase", marginBottom:16 }}>Client Information</div>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
-                  {[
-                    {l:"Client",        v:ri.client},
-                    {l:"Property Type", v:ri.propertyType},
-                    {l:"City",          v:ri.city},
-                    {l:"State",         v:ri.state},
-                  ].map(r=>(
+                  {[{l:"Client",v:ri.client},{l:"Property Type",v:ri.propertyType},{l:"City",v:ri.city},{l:"State",v:ri.state}].map(r=>(
                     <div key={r.l}>
                       <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:3 }}>{r.l}</div>
                       <div style={{ fontSize:14, color:txt, fontWeight:500 }}>{r.v}</div>
@@ -237,12 +239,7 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
               <div style={{ background:white, borderRadius:20, padding:"24px", boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
                 <div style={{ fontSize:13, fontWeight:600, color:sub, letterSpacing:0.5, textTransform:"uppercase", marginBottom:16 }}>Summary</div>
                 <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:10, marginBottom:16 }}>
-                  {[
-                    {l:"Total",       v:def.length, c:"#000"},
-                    {l:"Open",        v:op,         c:red},
-                    {l:"In Progress", v:ip,         c:"#AF52DE"},
-                    {l:"Resolved",    v:res,        c:"#34C759"},
-                  ].map(s=>(
+                  {[{l:"Total",v:def.length,c:"#000"},{l:"Open",v:op,c:red},{l:"In Progress",v:ip,c:"#AF52DE"},{l:"Resolved",v:res,c:"#34C759"}].map(s=>(
                     <div key={s.l} style={{ textAlign:"center", padding:"16px 8px", background:iosBg, borderRadius:14 }}>
                       <div style={{ fontSize:28, fontWeight:800, color:s.c, letterSpacing:-1 }}>{s.v}</div>
                       <div style={{ fontSize:11, color:sub, marginTop:4, fontWeight:600 }}>{s.l}</div>
@@ -263,17 +260,11 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
               </div>
             </div>
           ) : (
-            // MOBILE
             <div style={{ marginBottom:16 }}>
               <div style={{ background:white, borderRadius:20, padding:"20px", marginBottom:16, boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
                 <div style={{ fontSize:13, fontWeight:600, color:sub, letterSpacing:0.5, textTransform:"uppercase", marginBottom:14 }}>Client Information</div>
                 <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
-                  {[
-                    {l:"Client",        v:ri.client},
-                    {l:"Property Type", v:ri.propertyType},
-                    {l:"City",          v:ri.city},
-                    {l:"State",         v:ri.state},
-                  ].map(r=>(
+                  {[{l:"Client",v:ri.client},{l:"Property Type",v:ri.propertyType},{l:"City",v:ri.city},{l:"State",v:ri.state}].map(r=>(
                     <div key={r.l}>
                       <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:3 }}>{r.l}</div>
                       <div style={{ fontSize:14, color:txt, fontWeight:500 }}>{r.v}</div>
@@ -288,12 +279,7 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
               <div style={{ background:white, borderRadius:20, padding:"20px", boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
                 <div style={{ fontSize:13, fontWeight:600, color:sub, letterSpacing:0.5, textTransform:"uppercase", marginBottom:14 }}>Summary</div>
                 <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:8, marginBottom:16 }}>
-                  {[
-                    {l:"Total",    v:def.length, c:"#000"},
-                    {l:"Open",     v:op,         c:red},
-                    {l:"Progress", v:ip,         c:"#AF52DE"},
-                    {l:"Resolved", v:res,        c:"#34C759"},
-                  ].map(s=>(
+                  {[{l:"Total",v:def.length,c:"#000"},{l:"Open",v:op,c:red},{l:"Progress",v:ip,c:"#AF52DE"},{l:"Resolved",v:res,c:"#34C759"}].map(s=>(
                     <div key={s.l} style={{ textAlign:"center", padding:"14px 8px", background:iosBg, borderRadius:14 }}>
                       <div style={{ fontSize:22, fontWeight:800, color:s.c, letterSpacing:-1 }}>{s.v}</div>
                       <div style={{ fontSize:10, color:sub, marginTop:4, fontWeight:600 }}>{s.l}</div>
@@ -315,33 +301,74 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
             </div>
           )}
 
+          {/* FLOOR PLAN IN REPORT */}
+          {ri.floorPlan && (
+            <div style={{ background:white, borderRadius:20, padding:"20px", marginBottom:20, boxShadow:"0 2px 12px rgba(0,0,0,0.06)" }}>
+              <div style={{ fontSize:13, fontWeight:600, color:sub, letterSpacing:0.5, textTransform:"uppercase", marginBottom:14 }}>Floor Plan</div>
+              <div style={{ position:"relative", borderRadius:14, overflow:"hidden", border:`1.5px solid ${iosSep}` }}>
+                <img src={ri.floorPlan} alt="Floor Plan" style={{ width:"100%", display:"block" }}/>
+                {(ri.floorPlanMarkers||[]).map((m,idx)=>(
+                  <div key={m.id} style={{
+                    position:"absolute", left:`${m.x}%`, top:`${m.y}%`,
+                    transform:"translate(-50%,-50%)",
+                    width:28, height:28, borderRadius:"50%",
+                    background:red, color:white,
+                    display:"flex", alignItems:"center", justifyContent:"center",
+                    fontSize:12, fontWeight:900,
+                    border:"2px solid white",
+                    boxShadow:"0 2px 8px rgba(0,0,0,0.4)",
+                  }}>
+                    {idx+1}
+                  </div>
+                ))}
+              </div>
+              {(ri.floorPlanMarkers||[]).length>0&&(
+                <div style={{ fontSize:12, color:sub, marginTop:8, textAlign:"center" }}>
+                  {ri.floorPlanMarkers.length} defect location{ri.floorPlanMarkers.length!==1?"s":""} marked
+                </div>
+              )}
+            </div>
+          )}
+
           {/* DEFECTS */}
           <div style={{ marginBottom:24 }}>
             <div style={{ fontSize:13, fontWeight:600, color:sub, letterSpacing:0.5, textTransform:"uppercase", marginBottom:14, paddingLeft:4 }}>Defect Details</div>
             {def.length===0?(
               <div style={{ textAlign:"center", padding:24, color:sub, background:white, borderRadius:16, fontSize:14 }}>No defects recorded.</div>
             ):(
-              <div style={{ display:"grid", gridTemplateColumns: isLaptop ? "repeat(2,1fr)" : "1fr", gap:12 }}>
-                {def.map((d,idx)=>(
-                  <div key={d.id} style={{ background:white, borderRadius:20, overflow:"hidden", boxShadow:"0 2px 12px rgba(0,0,0,0.06)", borderLeft:`5px solid ${SEV[d.severity]?.bar}` }}>
-                    {d.photo&&<img src={d.photo} alt="Defect" style={{ width:"100%", height:160, objectFit:"cover" }}/>}
-                    <div style={{ padding:"14px 18px" }}>
-                      <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
-                        <span style={{ fontSize:12, fontWeight:700, color:sub }}>#{idx+1}</span>
-                        <Pill type="sev" value={d.severity}/>
-                        <Pill type="sta" value={d.status}/>
+              <div style={{ display:"grid", gridTemplateColumns: isLaptop?"repeat(2,1fr)":"1fr", gap:12 }}>
+                {def.map((d,idx)=>{
+                  const photos = getDefectPhotos(d);
+                  return(
+                    <div key={d.id} style={{ background:white, borderRadius:20, overflow:"hidden", boxShadow:"0 2px 12px rgba(0,0,0,0.06)", borderLeft:`5px solid ${SEV[d.severity]?.bar}` }}>
+                      {photos.length>0&&(
+                        <div style={{ display:"grid", gridTemplateColumns:photos.length===1?"1fr":"1fr 1fr", gap:2 }}>
+                          {photos.map((p,pi)=>(
+                            <div key={pi} style={{ height:photos.length===1?160:100, overflow:"hidden" }}>
+                              <img src={p} alt={`Photo ${pi+1}`} style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                      <div style={{ padding:"14px 18px" }}>
+                        <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
+                          <span style={{ fontSize:12, fontWeight:700, color:sub }}>#{idx+1}</span>
+                          <Pill type="sev" value={d.severity}/>
+                          <Pill type="sta" value={d.status}/>
+                        </div>
+                        <div style={{ fontSize:13, color:sub, marginBottom:6 }}>📍 {d.location} · {d.category}</div>
+                        <div style={{ fontSize:14, color:txt, lineHeight:1.6 }}>{d.description}</div>
                       </div>
-                      <div style={{ fontSize:13, color:sub, marginBottom:6 }}>📍 {d.location} · {d.category}</div>
-                      <div style={{ fontSize:14, color:txt, lineHeight:1.6 }}>{d.description}</div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>
 
-          {/* SIGNATURE */}
-<SignatureSection reportId={ri.id} inspections={inspections}/>
+          {/* SIGNATURES */}
+          <SignatureSection reportId={ri.id} inspections={inspections}/>
+
         </div>
       </div>
     );
@@ -350,8 +377,8 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
   // REPORTS LIST
   return (
     <div style={{ background:iosBg, minHeight:"100vh", paddingBottom:40 }}>
-      <div style={{ background:white, padding: isLaptop ? "40px 40px 20px" : "72px 24px 20px", borderBottom:`1px solid ${iosSep}`, marginBottom:20 }}>
-        <div style={{ fontWeight:800, fontSize: isLaptop ? 32 : 28, color:txt, letterSpacing:-0.8, marginBottom:4 }}>Reports</div>
+      <div style={{ background:white, padding: isLaptop?"40px 40px 20px":"72px 24px 20px", borderBottom:`1px solid ${iosSep}`, marginBottom:20 }}>
+        <div style={{ fontWeight:800, fontSize: isLaptop?32:28, color:txt, letterSpacing:-0.8, marginBottom:4 }}>Reports</div>
         <div style={{ fontSize:14, color:sub }}>View and print inspection reports</div>
       </div>
       <div style={{ padding:pad }}>
@@ -360,7 +387,7 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
         ):inspections.length===0?(
           <EmptyState icon="📄" title="No reports yet" desc="Complete an inspection to generate a report"/>
         ):(
-          <div style={{ display:"grid", gridTemplateColumns: isLaptop ? "repeat(3,1fr)" : "1fr", gap:12 }}>
+          <div style={{ display:"grid", gridTemplateColumns: isLaptop?"repeat(3,1fr)":"1fr", gap:12 }}>
             {inspections.map(i=>(
               <Card key={i.id} style={{ padding:"16px 18px" }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12, marginBottom:12 }}>
