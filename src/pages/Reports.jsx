@@ -203,7 +203,7 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
         <div style={{ padding:pad }}>
 
           {/* COVER INFO */}
-          <div style={{ background:white, padding:"24px 20px", marginBottom:1 }}>
+          <div className="cover-section" style={{ background:white, padding:"24px 20px", marginBottom:1 }}>
             <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20, paddingBottom:20, borderBottom:"2px solid #000" }}>
               <div style={{ width:120, height:48 }}>
                 <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain" }}/>
@@ -246,8 +246,8 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
           </div>
 
           {/* FLOOR PLAN — clean, no markers */}
-          {ri.floorPlan&&(
-            <div style={{ background:white, padding:"20px", marginBottom:1 }}>
+{ri.floorPlan&&(
+  <div className="floorplan-section" style={{ background:white, padding:"20px", marginBottom:1 }}>
               <div style={{ fontSize:11, fontWeight:700, color:sub, letterSpacing:1.5, textTransform:"uppercase", marginBottom:6 }}>Floor Plan</div>
               <div style={{ fontSize:12, color:sub, marginBottom:12 }}>Property layout overview</div>
               <div style={{ border:"1px solid #E5E5EA", overflow:"hidden" }}>
@@ -280,7 +280,7 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
                     const marker   = markers[defNum - 1];
 
                     return(
-                      <div key={d.id} style={{ background:white, marginBottom:1 }}>
+                      <div key={d.id} className="defect-card" style={{ background:white, marginBottom:1 }}>
 
                         {/* DEFECT TITLE */}
                         <div style={{ padding:"10px 20px", background:"#F5F5F5", borderLeft:`4px solid ${SEV[d.severity]?.bar||gold}` }}>
@@ -357,10 +357,42 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
             )}
           </div>
 
-          {/* SIGNATURES */}
+                    {/* SIGNATURES */}
           <SignatureSection reportId={ri.id} inspections={inspections}/>
 
         </div>
+
+        <style>{`
+          @media print {
+            /* Hide everything except report content */
+            button { display: none !important; }
+
+            /* 4 defects per page */
+            .defect-card:nth-child(4n) {
+              page-break-after: always;
+            }
+
+            /* Keep defect table together */
+            .defect-card {
+              page-break-inside: avoid;
+            }
+
+            /* Cover page on its own */
+            .cover-section {
+              page-break-after: always;
+            }
+
+            /* Floor plan on its own page */
+            .floorplan-section {
+              page-break-after: always;
+            }
+
+            body {
+              background: white !important;
+            }
+          }
+        `}</style>
+
       </div>
     );
   }
@@ -402,4 +434,4 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
       </div>
     </div>
   );
-}
+} 
