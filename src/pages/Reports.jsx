@@ -250,29 +250,16 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
             ))}
           </div>
 
-          {/* FLOOR PLAN */}
-          {ri.floorPlan&&(
-            <div style={{ background:white, padding:"20px", marginBottom:1 }}>
-              <div style={{ fontSize:11, fontWeight:700, color:sub, letterSpacing:1.5, textTransform:"uppercase", marginBottom:14 }}>Floor Plan</div>
-              <div style={{ position:"relative", border:"1px solid #E5E5EA", overflow:"hidden" }}>
-                <img src={ri.floorPlan} alt="Floor Plan" style={{ width:"100%", display:"block" }}/>
-                {(ri.floorPlanMarkers||[]).map((m,idx)=>(
-                  <div key={m.id} style={{
-                    position:"absolute", left:`${m.x}%`, top:`${m.y}%`,
-                    transform:"translate(-50%,-50%)",
-                    width:26, height:26, borderRadius:"50%",
-                    background:red, color:white,
-                    display:"flex", alignItems:"center", justifyContent:"center",
-                    fontSize:11, fontWeight:900,
-                    border:"2px solid white",
-                    boxShadow:"0 2px 8px rgba(0,0,0,0.4)",
-                  }}>
-                    {idx+1}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
+          {/* FLOOR PLAN — Clean overview, no markers */}
+{ri.floorPlan&&(
+  <div style={{ background:white, padding:"20px", marginBottom:1 }}>
+    <div style={{ fontSize:11, fontWeight:700, color:sub, letterSpacing:1.5, textTransform:"uppercase", marginBottom:6 }}>Floor Plan</div>
+    <div style={{ fontSize:12, color:sub, marginBottom:14 }}>Property layout overview</div>
+    <div style={{ border:"1px solid #E5E5EA", overflow:"hidden" }}>
+      <img src={ri.floorPlan} alt="Floor Plan" style={{ width:"100%", display:"block" }}/>
+    </div>
+  </div>
+)}
 
           {/* DEFECTS BY LOCATION */}
           <div style={{ marginBottom:1 }}>
@@ -326,6 +313,42 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
                             ))}
                           </div>
 
+                          {/* FLOOR PLAN WITH SINGLE MARKER */}
+{ri.floorPlan && (ri.floorPlanMarkers||[]).length >= defNum && (
+  <div style={{ marginBottom:16 }}>
+    <div style={{ fontSize:10, fontWeight:700, color:sub, letterSpacing:1, textTransform:"uppercase", marginBottom:10 }}>Defect Location on Floor Plan</div>
+    <div style={{ position:"relative", border:"1px solid #E5E5EA", overflow:"hidden" }}>
+      <img src={ri.floorPlan} alt="Floor Plan" style={{ width:"100%", display:"block", opacity:0.6 }}/>
+      {/* Only show THIS defect's marker */}
+      {(ri.floorPlanMarkers||[]).map((m, mIdx) => {
+        const isThisDefect = mIdx === defNum - 1;
+        return (
+          <div key={m.id} style={{
+            position:"absolute", left:`${m.x}%`, top:`${m.y}%`,
+            transform:"translate(-50%,-50%)",
+            width: isThisDefect ? 32 : 20,
+            height: isThisDefect ? 32 : 20,
+            borderRadius:"50%",
+            background: isThisDefect ? red : "rgba(0,0,0,0.2)",
+            color:white,
+            display:"flex", alignItems:"center", justifyContent:"center",
+            fontSize: isThisDefect ? 13 : 9,
+            fontWeight:900,
+            border: isThisDefect ? "3px solid white" : "1px solid rgba(255,255,255,0.5)",
+            boxShadow: isThisDefect ? "0 2px 12px rgba(0,0,0,0.6)" : "none",
+            opacity: isThisDefect ? 1 : 0.3,
+            zIndex: isThisDefect ? 10 : 1,
+          }}>
+            {mIdx + 1}
+          </div>
+        );
+      })}
+    </div>
+  </div>
+)}
+
+{/* PHOTOS */}
+{photos.length>0&&(
                           {/* PHOTOS */}
                           {photos.length>0&&(
                             <div>
