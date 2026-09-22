@@ -27,7 +27,7 @@ export default function App() {
   const [animKey,     setAnimKey]     = useState(0);
   const [menuOpen,    setMenuOpen]    = useState(false);
   const [screenSize,  setScreenSize]  = useState(
-    window.innerWidth >= 1024 ? "laptop" :
+    window.innerWidth >= 1280 ? "laptop" :
     window.innerWidth >= 768  ? "tablet" : "mobile"
   );
 
@@ -36,7 +36,7 @@ export default function App() {
   useEffect(() => {
     const handleResize = () => {
       const w = window.innerWidth;
-      setScreenSize(w >= 1024 ? "laptop" : w >= 768 ? "tablet" : "mobile");
+      setScreenSize(w >= 1280 ? "laptop" : w >= 768 ? "tablet" : "mobile");
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
