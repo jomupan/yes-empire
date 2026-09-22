@@ -117,11 +117,11 @@ export default function App() {
         <div style={{ width:SIDEBAR_W, flexShrink:0, position:"fixed", top:0, left:0, bottom:0, zIndex:100 }}>
           <BottomNav page={page} nav={nav} user={user} logout={logout} open={true} setOpen={()=>{}} isLaptop={true}/>
         </div>
-        <div style={{ marginLeft:SIDEBAR_W, flex:1, minHeight:"100vh", width:`calc(100% - ${SIDEBAR_W}px)` }}>
-          <div key={animKey} style={slideStyle}>
-            {renderPage()}
-          </div>
-        </div>
+        <div style={{ marginLeft:SIDEBAR_W, flex:1, minHeight:"100vh", minWidth:0, overflow:"hidden" }}>
+        <div key={animKey} style={{ ...slideStyle, width:"100%", minHeight:"100vh" }}>
+          {renderPage()}
+       </div>
+    </div>
       </div>
     ) : (
       <div style={{ width:"100%", position:"relative" }}>
@@ -133,16 +133,17 @@ export default function App() {
       )}
 
       <style>{`
-        @keyframes slideUp {
+         #root { width:100%; min-height:100vh; }
+          @keyframes slideUp {
           from { opacity:0; transform:translateY(24px); }
           to   { opacity:1; transform:translateY(0); }
-        }
-        * { -webkit-tap-highlight-color:transparent; box-sizing:border-box; }
-        body { margin:0; padding:0; background:#0A0A0A; }
-        input,select,textarea,button { font-family:'Inter',-apple-system,sans-serif; }
-        ::-webkit-scrollbar { width:0px; }
-        button:active { opacity:0.75; transform:scale(0.98); }
-      `}</style>
+          }
+          * { -webkit-tap-highlight-color:transparent; box-sizing:border-box; }
+          body { margin:0; padding:0; background:#0A0A0A; width:100%; }
+          input,select,textarea,button { font-family:'Inter',-apple-system,sans-serif; }
+          ::-webkit-scrollbar { width:0px; }
+          button:active { opacity:0.75; transform:scale(0.98); }
+`       }</style>
     </div>
   );
 }
