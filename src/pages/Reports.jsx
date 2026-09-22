@@ -292,60 +292,51 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
                         </div>
 
                         <div style={{ padding:"16px 20px" }}>
-                          {/* DEFECT TABLE */}
-                          <div style={{ border:"1px solid #E5E5EA", marginBottom: photos.length>0?16:0 }}>
-                            {[
-                              {l:"Location",    v:d.location},
-                              {l:"Element",     v:d.element || d.category},
-                              {l:"Defect",      v:d.defectType || d.category},
-                              {l:"Severity",    v:d.severity},
-                              {l:"Status",      v:d.status},
-                              {l:"Description", v:d.description},
-                            ].map((r,i)=>(
-                              <div key={r.l} style={{ display:"flex", borderBottom: i<5?"1px solid #E5E5EA":"none" }}>
-                                <div style={{ width:120, padding:"10px 14px", background:"#F9F9F9", fontSize:11, fontWeight:700, color:sub, letterSpacing:0.5, textTransform:"uppercase", borderRight:"1px solid #E5E5EA", flexShrink:0 }}>
-                                  {r.l}
-                                </div>
-                                <div style={{ padding:"10px 14px", fontSize:13, color:txt, flex:1 }}>
-                                  {r.v}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-
-                          {/* FLOOR PLAN WITH SINGLE MARKER */}
-{ri.floorPlan && (ri.floorPlanMarkers||[]).length >= defNum && (
-  <div style={{ marginBottom:16 }}>
-    <div style={{ fontSize:10, fontWeight:700, color:sub, letterSpacing:1, textTransform:"uppercase", marginBottom:10 }}>Defect Location on Floor Plan</div>
-    <div style={{ position:"relative", border:"1px solid #E5E5EA", overflow:"hidden" }}>
-      <img src={ri.floorPlan} alt="Floor Plan" style={{ width:"100%", display:"block", opacity:0.6 }}/>
-      {/* Only show THIS defect's marker */}
-      {(ri.floorPlanMarkers||[]).map((m, mIdx) => {
-        const isThisDefect = mIdx === defNum - 1;
-        return (
-          <div key={m.id} style={{
-            position:"absolute", left:`${m.x}%`, top:`${m.y}%`,
-            transform:"translate(-50%,-50%)",
-            width: isThisDefect ? 32 : 20,
-            height: isThisDefect ? 32 : 20,
-            borderRadius:"50%",
-            background: isThisDefect ? red : "rgba(0,0,0,0.2)",
-            color:white,
-            display:"flex", alignItems:"center", justifyContent:"center",
-            fontSize: isThisDefect ? 13 : 9,
-            fontWeight:900,
-            border: isThisDefect ? "3px solid white" : "1px solid rgba(255,255,255,0.5)",
-            boxShadow: isThisDefect ? "0 2px 12px rgba(0,0,0,0.6)" : "none",
-            opacity: isThisDefect ? 1 : 0.3,
-            zIndex: isThisDefect ? 10 : 1,
-          }}>
-            {mIdx + 1}
-          </div>
-        );
-      })}
-    </div>
+                          {/* DEFECT TABLE WITH FLOOR PLAN ON RIGHT */}
+<div style={{ border:"1px solid #E5E5EA", marginBottom: photos.length>0?16:0, display:"flex" }}>
+  {/* LEFT — defect details */}
+  <div style={{ flex:1, borderRight: ri.floorPlan?"1px solid #E5E5EA":"none" }}>
+    {[
+      {l:"Location",    v:d.location},
+      {l:"Element",     v:d.element || d.category},
+      {l:"Defect",      v:d.defectType || d.category},
+      {l:"Description", v:d.description},
+    ].map((r,i)=>(
+      <div key={r.l} style={{ display:"flex", borderBottom: i<3?"1px solid #E5E5EA":"none", minHeight: i===3?80:40 }}>
+        <div style={{ width:110, padding:"10px 14px", background:"#F9F9F9", fontSize:11, fontWeight:700, color:"#000", letterSpacing:0.5, textTransform:"uppercase", borderRight:"1px solid #E5E5EA", flexShrink:0 }}>
+          {r.l}
+        </div>
+        <div style={{ padding:"10px 14px", fontSize:13, color:txt, flex:1 }}>
+          {r.v}
+        </div>
+      </div>
+    ))}
   </div>
-)}
+
+  {/* RIGHT — floor plan with only this defect marker */}
+  {ri.floorPlan && (
+    <div style={{ width:160, flexShrink:0, position:"relative", overflow:"hidden" }}>
+      <img src={ri.floorPlan} alt="Floor Plan" style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }}/>
+      {/* Show only this defect's marker */}
+      {(ri.floorPlanMarkers||[]).length >= defNum && (
+        <div style={{
+          position:"absolute",
+          left:`${(ri.floorPlanMarkers||[])[defNum-1]?.x}%`,
+          top:`${(ri.floorPlanMarkers||[])[defNum-1]?.y}%`,
+          transform:"translate(-50%,-50%)",
+          width:20, height:20, borderRadius:"50%",
+          background:red, color:white,
+          display:"flex", alignItems:"center", justifyContent:"center",
+          fontSize:10, fontWeight:900,
+          border:"2px solid white",
+          boxShadow:"0 2px 8px rgba(0,0,0,0.5)",
+        }}>
+          {defNum}
+        </div>
+      )}
+    </div>
+  )}
+</div>
 
 {/* PHOTOS */}
 {photos.length>0&&(
