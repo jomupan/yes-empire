@@ -111,20 +111,20 @@ export default function App() {
   };
 
   return (
-    <div style={{ minHeight:"100vh", background:"#F2F2F7", fontFamily:"'Inter',-apple-system,sans-serif" }}>
-      {isLaptop ? (
-        <div style={{ display:"flex", minHeight:"100vh" }}>
-          <div style={{ width:SIDEBAR_W, flexShrink:0, position:"fixed", top:0, left:0, bottom:0, zIndex:100 }}>
-            <BottomNav page={page} nav={nav} user={user} logout={logout} open={true} setOpen={()=>{}} isLaptop={true}/>
-          </div>
-          <div style={{ marginLeft:SIDEBAR_W, flex:1, minHeight:"100vh" }}>
-            <div key={animKey} style={slideStyle}>
-              {renderPage()}
-            </div>
+  <div style={{ minHeight:"100vh", background:"#F2F2F7", fontFamily:"'Inter',-apple-system,sans-serif", width:"100%", overflowX:"hidden" }}>
+    {isLaptop ? (
+      <div style={{ display:"flex", minHeight:"100vh", width:"100%" }}>
+        <div style={{ width:SIDEBAR_W, flexShrink:0, position:"fixed", top:0, left:0, bottom:0, zIndex:100 }}>
+          <BottomNav page={page} nav={nav} user={user} logout={logout} open={true} setOpen={()=>{}} isLaptop={true}/>
+        </div>
+        <div style={{ marginLeft:SIDEBAR_W, flex:1, minHeight:"100vh", width:`calc(100% - ${SIDEBAR_W}px)` }}>
+          <div key={animKey} style={slideStyle}>
+            {renderPage()}
           </div>
         </div>
-      ) : (
-        <div style={{ width:"100%", position:"relative" }}>
+      </div>
+    ) : (
+      <div style={{ width:"100%", position:"relative" }}>
           <div key={animKey} style={slideStyle}>
             {renderPage()}
           </div>
