@@ -28,11 +28,11 @@ export default function Dashboard({ inspections, loading, nav, goDetail, user, i
 
       {/* HERO */}
       <div style={{ background:black, padding: isLaptop?"40px 40px 32px":"72px 24px 32px", marginBottom:1 }}>
-        <div style={{ display:"flex", alignItems:"center", gap:12, marginBottom:16 }}>
-          <div style={{ width:48, height:28, overflow:"hidden", display:"flex", alignItems:"center" }}>
-            <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", objectFit:"contain", animation:"slideLeftRight 3s ease-in-out infinite" }}/>
+        <div style={{ marginBottom:20 }}>
+          <div style={{ width:200, height:80, overflow:"hidden", display:"flex", alignItems:"center" }}>
+           <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", objectFit:"contain", animation:"slideLeftRight 3s ease-in-out infinite" }}/>
           </div>
-        </div>
+          </div>
         <div style={{ fontSize:11, color:gold, fontWeight:700, letterSpacing:2, textTransform:"uppercase", marginBottom:12 }}>{today}</div>
         <div style={{ color:white, fontWeight:800, fontSize: isLaptop?36:28, letterSpacing:-0.8, lineHeight:1.1, marginBottom:4 }}>
           Hello, {user?.name?.split(" ")[0]}

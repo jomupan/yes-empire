@@ -54,7 +54,9 @@ export const IST = {
 // ── Data ──────────────────────────────────────────────────────────────────────
 export const MY_STATES  = ["Selangor","Kuala Lumpur","Johor","Pulau Pinang","Perak","Sabah","Sarawak","Kedah","Kelantan","Terengganu","Pahang","Negeri Sembilan","Melaka","Perlis","Putrajaya","Labuan"];
 export const PROP_TYPES = ["Landed House","Apartment","Condominium","Townhouse","Semi-Detached","Bungalow","Shop Lot"];
-export const CATS       = ["Plumbing","Electrical","Structural","Painting / Finishing","Roofing","Flooring","Windows & Doors","HVAC / Ventilation","Other"];
+export const CATS = ["Plumbing","Electrical","Structural","Painting / Finishing","Roofing","Flooring","Windows & Doors","HVAC / Ventilation","Other"];
+export const ELEMENTS = ["Wall","Floor","Ceiling","Door","Window","Electrical","Plumbing","Roof","Column","Beam","Staircase","Other"];
+export const DEFECT_TYPES = ["Hairline Crack","Major Crack","Uneven Colour","Uneven Surface","Water Stain","Paint Peeling","Damp / Wet Patch","Hollow Sound","Broken","Missing","Leaking","Rust","Mould","Poor Workmanship","Other"];
 export const LOCS       = ["Living Room","Master Bedroom","Bedroom 2","Bedroom 3","Kitchen","Bathroom","Master Bathroom","Dining Room","Garage","Staircase","Exterior / Facade","Roof","Other"];
 
 export const NAV = [

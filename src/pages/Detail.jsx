@@ -5,13 +5,13 @@ import Pill from "../components/Pill";
 import Fld from "../components/Fld";
 import EmptyState from "../components/EmptyState";
 import { FLOOR_PLANS } from "../floorPlans";
-import { white, black, gold, txt, sub, bdr, red, green, iosBg, iosSep, SEV, STA, LOCS, CATS } from "../config";
+import { white, black, gold, txt, sub, bdr, red, green, iosBg, iosSep, SEV, STA, LOCS, CATS, ELEMENTS, DEFECT_TYPES } from "../config";
 
 export default function Detail({ inspections, selId, nav, setReportId, isLaptop }) {
   const [showDF,       setShowDF]       = useState(false);
   const [confirmDel,   setConfirmDel]   = useState(false);
   const [saving,       setSaving]       = useState(false);
-  const [dForm,        setDForm]        = useState({ location:"", category:"", severity:"Medium", status:"Open", description:"", photos:[] });
+  const [dForm, setDForm] = useState({ location:"", category:"", element:"", defectType:"", severity:"Medium", status:"Open", description:"", photos:[] });
   const [dErr,         setDErr]         = useState({});
   const [floorPlan,    setFloorPlan]    = useState(null);
   const [markers,      setMarkers]      = useState([]);
@@ -118,12 +118,14 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
   };
 
   const valDef = () => {
-    const e = {};
-    if (!dForm.location)           e.location    = "Required";
-    if (!dForm.category)           e.category    = "Required";
-    if (!dForm.description.trim()) e.description = "Required";
-    return e;
-  };
+  const e = {};
+  if (!dForm.location)           e.location    = "Required";
+  if (!dForm.element)            e.element     = "Required";
+  if (!dForm.defectType)         e.defectType  = "Required";
+  if (!dForm.category)           e.category    = "Required";
+  if (!dForm.description.trim()) e.description = "Required";
+  return e;
+};
 
   const addDefect = async () => {
     const e = valDef();
@@ -465,19 +467,34 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
             </div>
             <div style={{ padding:"20px 24px", display:"flex", flexDirection:"column", gap:16, flex:1, overflowY:"auto" }}>
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
-                <Fld label="Location" error={dErr.location}>
-                  <select style={sSt("location")} value={dForm.location} onChange={e=>setD("location",e.target.value)}>
-                    <option value="">Select...</option>
-                    {LOCS.map(l=><option key={l}>{l}</option>)}
-                  </select>
-                </Fld>
-                <Fld label="Category" error={dErr.category}>
-                  <select style={sSt("category")} value={dForm.category} onChange={e=>setD("category",e.target.value)}>
-                    <option value="">Select...</option>
-                    {CATS.map(c=><option key={c}>{c}</option>)}
-                  </select>
-                </Fld>
-              </div>
+  <Fld label="Location" error={dErr.location}>
+    <select style={sSt("location")} value={dForm.location} onChange={e=>setD("location",e.target.value)}>
+      <option value="">Select...</option>
+      {LOCS.map(l=><option key={l}>{l}</option>)}
+    </select>
+  </Fld>
+  <Fld label="Element" error={dErr.element}>
+    <select style={sSt("element")} value={dForm.element} onChange={e=>setD("element",e.target.value)}>
+      <option value="">Select...</option>
+      {ELEMENTS.map(e=><option key={e}>{e}</option>)}
+    </select>
+  </Fld>
+</div>
+
+<div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+  <Fld label="Defect Type" error={dErr.defectType}>
+    <select style={sSt("defectType")} value={dForm.defectType} onChange={e=>setD("defectType",e.target.value)}>
+      <option value="">Select...</option>
+      {DEFECT_TYPES.map(d=><option key={d}>{d}</option>)}
+    </select>
+  </Fld>
+  <Fld label="Category" error={dErr.category}>
+    <select style={sSt("category")} value={dForm.category} onChange={e=>setD("category",e.target.value)}>
+      <option value="">Select...</option>
+      {CATS.map(c=><option key={c}>{c}</option>)}
+    </select>
+  </Fld>
+</div>
               <Fld label="Severity">
                 <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:6 }}>
                   {["Low","Medium","High","Critical"].map(s=>(
