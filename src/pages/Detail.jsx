@@ -11,13 +11,14 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
   const [showDF,       setShowDF]       = useState(false);
   const [confirmDel,   setConfirmDel]   = useState(false);
   const [saving,       setSaving]       = useState(false);
-  const [dForm, setDForm] = useState({ location:"", category:"", element:"", defectType:"", severity:"Medium", status:"Open", description:"", photos:[] });
+  const [dForm,        setDForm]        = useState({ location:"", category:"", element:"", defectType:"", severity:"Medium", status:"Open", description:"", photos:[] });
   const [dErr,         setDErr]         = useState({});
   const [floorPlan,    setFloorPlan]    = useState(null);
   const [markers,      setMarkers]      = useState([]);
   const [markingMode,  setMarkingMode]  = useState(false);
   const [showFP,       setShowFP]       = useState(false);
   const [showFPPicker, setShowFPPicker] = useState(false);
+  const [lightbox,     setLightbox]     = useState(null);
 
   const sel = inspections.find(i => i.id === selId);
 
@@ -118,14 +119,14 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
   };
 
   const valDef = () => {
-  const e = {};
-  if (!dForm.location)           e.location    = "Required";
-  if (!dForm.element)            e.element     = "Required";
-  if (!dForm.defectType)         e.defectType  = "Required";
-  if (!dForm.category)           e.category    = "Required";
-  if (!dForm.description.trim()) e.description = "Required";
-  return e;
-};
+    const e = {};
+    if (!dForm.location)           e.location    = "Required";
+    if (!dForm.element)            e.element     = "Required";
+    if (!dForm.defectType)         e.defectType  = "Required";
+    if (!dForm.category)           e.category    = "Required";
+    if (!dForm.description.trim()) e.description = "Required";
+    return e;
+  };
 
   const addDefect = async () => {
     const e = valDef();
@@ -136,7 +137,7 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
       defects: updated,
       status: sel.status==="Pending" ? "In Progress" : sel.status
     });
-    setDForm({ location:"", category:"", severity:"Medium", status:"Open", description:"", photos:[] });
+    setDForm({ location:"", category:"", element:"", defectType:"", severity:"Medium", status:"Open", description:"", photos:[] });
     setDErr({});
     setSaving(false);
     setShowDF(false);
@@ -180,7 +181,7 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
             <div style={{ fontWeight:800, fontSize: isLaptop?28:22, color:white, letterSpacing:-0.5, marginBottom:10 }}>{sel.title}</div>
             <Pill type="insp" value={sel.status}/>
           </div>
-          <button onClick={()=>setConfirmDel(true)} style={{ padding:"9px 16px", background:"rgba(255,59,48,0.15)", color:"#FF3B30", border:"none", fontWeight:600, fontSize:12, cursor:"pointer", fontFamily:"inherit", letterSpacing:0.5 }}>
+          <button onClick={()=>setConfirmDel(true)} style={{ padding:"9px 16px", background:"rgba(255,59,48,0.15)", color:"#FF3B30", border:"none", fontWeight:600, fontSize:12, cursor:"pointer", fontFamily:"inherit" }}>
             Delete
           </button>
         </div>
@@ -203,7 +204,7 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
         {isLaptop ? (
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:1, background:"#E5E5EA", marginBottom:16 }}>
             <div style={{ background:white, padding:"24px" }}>
-              <div style={{ fontSize:11, fontWeight:700, color:sub, letterSpacing:1.5, textTransform:"uppercase", marginBottom:16 }}>Inspection Details</div>
+              <div style={{ fontSize:11, fontWeight:700, color:sub, letterSpacing:1.5, textTransform:"uppercase", marginBottom:16 }}>Details</div>
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>
                 {[{l:"Client",v:sel.client},{l:"Inspector",v:sel.inspector},{l:"Type",v:sel.propertyType},{l:"Date",v:sel.date},{l:"City",v:sel.city},{l:"State",v:sel.state}].map(r=>(
                   <div key={r.l}>
@@ -219,11 +220,11 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
             </div>
             <div style={{ background:white, padding:"24px", display:"flex", flexDirection:"column", gap:10 }}>
               <div style={{ fontSize:11, fontWeight:700, color:sub, letterSpacing:1.5, textTransform:"uppercase", marginBottom:6 }}>Actions</div>
-              <button onClick={()=>{setReportId(sel.id);nav("reports");}} style={{ padding:"13px 16px", background:iosBg, color:txt, border:"1px solid #E5E5EA", fontWeight:600, fontSize:13, cursor:"pointer", fontFamily:"inherit", textAlign:"left", letterSpacing:0.3 }}>
+              <button onClick={()=>{setReportId(sel.id);nav("reports");}} style={{ padding:"13px 16px", background:iosBg, color:txt, border:"1px solid #E5E5EA", fontWeight:600, fontSize:13, cursor:"pointer", fontFamily:"inherit", textAlign:"left" }}>
                 View Report
               </button>
               {unresolved===0&&defs.length>0&&sel.status!=="Completed"&&(
-                <button onClick={markDone} style={{ padding:"13px 16px", background:black, color:white, border:"none", fontWeight:600, fontSize:13, cursor:"pointer", fontFamily:"inherit", textAlign:"left", letterSpacing:0.3 }}>
+                <button onClick={markDone} style={{ padding:"13px 16px", background:black, color:white, border:"none", fontWeight:600, fontSize:13, cursor:"pointer", fontFamily:"inherit", textAlign:"left" }}>
                   Mark as Completed
                 </button>
               )}
@@ -247,11 +248,11 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
               </div>
             </div>
             <div style={{ display:"flex", gap:1, marginBottom:16, background:"#E5E5EA" }}>
-              <button onClick={()=>{setReportId(sel.id);nav("reports");}} style={{ flex:1, padding:"13px", background:white, color:txt, border:"none", fontWeight:600, fontSize:12, cursor:"pointer", fontFamily:"inherit", letterSpacing:0.5 }}>
+              <button onClick={()=>{setReportId(sel.id);nav("reports");}} style={{ flex:1, padding:"13px", background:white, color:txt, border:"none", fontWeight:600, fontSize:12, cursor:"pointer", fontFamily:"inherit" }}>
                 View Report
               </button>
               {unresolved===0&&defs.length>0&&sel.status!=="Completed"&&(
-                <button onClick={markDone} style={{ flex:1, padding:"13px", background:black, color:white, border:"none", fontWeight:600, fontSize:12, cursor:"pointer", fontFamily:"inherit", letterSpacing:0.5 }}>
+                <button onClick={markDone} style={{ flex:1, padding:"13px", background:black, color:white, border:"none", fontWeight:600, fontSize:12, cursor:"pointer", fontFamily:"inherit" }}>
                   Mark Complete
                 </button>
               )}
@@ -265,11 +266,11 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
             <div style={{ fontSize:11, fontWeight:700, color:sub, letterSpacing:1.5, textTransform:"uppercase" }}>Floor Plan</div>
             <div style={{ display:"flex", gap:8 }}>
               {floorPlan&&(
-                <button onClick={()=>setShowFP(!showFP)} style={{ padding:"7px 14px", background:showFP?black:iosBg, color:showFP?white:txt, border:"1px solid #E5E5EA", fontWeight:600, fontSize:11, cursor:"pointer", fontFamily:"inherit", letterSpacing:0.5 }}>
+                <button onClick={()=>setShowFP(!showFP)} style={{ padding:"7px 14px", background:showFP?black:iosBg, color:showFP?white:txt, border:"1px solid #E5E5EA", fontWeight:600, fontSize:11, cursor:"pointer", fontFamily:"inherit" }}>
                   {showFP?"Hide":"View"}
                 </button>
               )}
-              <button onClick={()=>setShowFPPicker(true)} style={{ padding:"7px 14px", background:gold, color:white, border:"none", fontWeight:600, fontSize:11, cursor:"pointer", fontFamily:"inherit", letterSpacing:0.5 }}>
+              <button onClick={()=>setShowFPPicker(true)} style={{ padding:"7px 14px", background:gold, color:white, border:"none", fontWeight:600, fontSize:11, cursor:"pointer", fontFamily:"inherit" }}>
                 {floorPlan?"Change":"Select"}
               </button>
               {floorPlan&&(
@@ -328,7 +329,7 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
                       const updated=markers.slice(0,-1);
                       setMarkers(updated);
                       await updateDoc(doc(db,"inspections",selId),{floorPlanMarkers:updated});
-                    }} style={{ padding:"8px 14px", background:iosBg, color:txt, border:"1px solid #E5E5EA", fontWeight:600, fontSize:11, cursor:"pointer", fontFamily:"inherit", letterSpacing:0.5 }}>
+                    }} style={{ padding:"8px 14px", background:iosBg, color:txt, border:"1px solid #E5E5EA", fontWeight:600, fontSize:11, cursor:"pointer", fontFamily:"inherit" }}>
                       Undo Last
                     </button>
                     <button onClick={clearMarkers} style={{ padding:"8px 14px", background:"rgba(255,59,48,0.1)", color:red, border:"none", fontWeight:600, fontSize:11, cursor:"pointer", fontFamily:"inherit" }}>
@@ -338,7 +339,7 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
                 )}
               </div>
               {markingMode&&(
-                <div style={{ padding:"10px 14px", background:`${gold}15`, fontSize:12, color:gold, fontWeight:600, marginBottom:12, textAlign:"center", letterSpacing:0.3 }}>
+                <div style={{ padding:"10px 14px", background:`${gold}15`, fontSize:12, color:gold, fontWeight:600, marginBottom:12, textAlign:"center" }}>
                   Tap on the floor plan to mark a defect location
                 </div>
               )}
@@ -361,7 +362,7 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
                 ))}
               </div>
               {markers.length>0&&(
-                <div style={{ fontSize:11, color:sub, marginTop:8, textAlign:"center", letterSpacing:0.5 }}>
+                <div style={{ fontSize:11, color:sub, marginTop:8, textAlign:"center" }}>
                   {markers.length} location{markers.length!==1?"s":""} marked
                 </div>
               )}
@@ -395,11 +396,15 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
               const defPhotos=getDefectPhotos(d);
               return(
                 <div key={d.id} style={{ background:white, borderLeft:`4px solid ${SEV[d.severity]?.bar||"#ccc"}` }}>
+                  {/* PHOTOS */}
                   {defPhotos.length>0&&(
                     <div style={{ display:"grid", gridTemplateColumns:defPhotos.length===1?"1fr":"1fr 1fr", gap:1 }}>
                       {defPhotos.map((p,idx)=>(
-                        <div key={idx} style={{ height:defPhotos.length===1?200:120, overflow:"hidden" }}>
-                          <img src={p} alt={`Photo ${idx+1}`} style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
+                        <div key={idx} onClick={()=>setLightbox(p)} style={{ height:defPhotos.length===1?200:120, overflow:"hidden", cursor:"pointer" }}>
+                          <img src={p} alt={`Photo ${idx+1}`} style={{ width:"100%", height:"100%", objectFit:"cover", transition:"transform 0.2s" }}
+                            onMouseEnter={e=>e.target.style.transform="scale(1.03)"}
+                            onMouseLeave={e=>e.target.style.transform="scale(1)"}
+                          />
                         </div>
                       ))}
                     </div>
@@ -409,23 +414,25 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
                       <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:8, flex:1 }}>
                         <Pill type="sev" value={d.severity}/>
                         <Pill type="sta" value={d.status}/>
-                        <span style={{ fontSize:11, color:sub, background:iosBg, padding:"3px 8px", fontWeight:500, letterSpacing:0.3 }}>{d.category}</span>
+                        <span style={{ fontSize:11, color:sub, background:iosBg, padding:"3px 8px", fontWeight:500 }}>{d.category}</span>
                       </div>
                       <button onClick={()=>deleteDefect(d.id)} style={{ background:"none", border:"none", color:red, fontSize:16, cursor:"pointer", opacity:0.5, flexShrink:0 }}>×</button>
                     </div>
-                    <div style={{ fontSize:12, color:sub, marginBottom:6, fontWeight:500, letterSpacing:0.3 }}>{d.location}</div>
+                    <div style={{ fontSize:12, color:sub, marginBottom:4, fontWeight:500 }}>{d.location}</div>
+                    {d.element&&<div style={{ fontSize:12, color:sub, marginBottom:4 }}>Element: {d.element}</div>}
+                    {d.defectType&&<div style={{ fontSize:12, color:sub, marginBottom:6 }}>Defect: {d.defectType}</div>}
                     <p style={{ fontSize:13, color:txt, margin:0, lineHeight:1.6 }}>{d.description}</p>
                     {defPhotos.length>1&&(
-                      <div style={{ fontSize:11, color:sub, marginTop:6, letterSpacing:0.5 }}>{defPhotos.length} PHOTOS</div>
+                      <div style={{ fontSize:11, color:sub, marginTop:6, letterSpacing:0.5 }}>{defPhotos.length} PHOTOS — TAP TO VIEW</div>
                     )}
                     {d.status!=="Resolved"&&(
                       <div style={{ marginTop:12, display:"flex", gap:8, flexWrap:"wrap" }}>
                         {d.status==="Open"&&(
-                          <button onClick={()=>updDefSt(d.id,"In Progress")} style={{ padding:"7px 14px", fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:"inherit", letterSpacing:0.5, border:"none", background:STA["In Progress"].bg, color:STA["In Progress"].color }}>
+                          <button onClick={()=>updDefSt(d.id,"In Progress")} style={{ padding:"7px 14px", fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:"inherit", border:"none", background:STA["In Progress"].bg, color:STA["In Progress"].color }}>
                             In Progress
                           </button>
                         )}
-                        <button onClick={()=>updDefSt(d.id,"Resolved")} style={{ padding:"7px 14px", fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:"inherit", letterSpacing:0.5, border:"none", background:STA["Resolved"].bg, color:STA["Resolved"].color }}>
+                        <button onClick={()=>updDefSt(d.id,"Resolved")} style={{ padding:"7px 14px", fontSize:11, fontWeight:700, cursor:"pointer", fontFamily:"inherit", border:"none", background:STA["Resolved"].bg, color:STA["Resolved"].color }}>
                           Mark Resolved
                         </button>
                       </div>
@@ -437,6 +444,28 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
           </div>
         )}
       </div>
+
+      {/* PHOTO LIGHTBOX */}
+      {lightbox&&(
+        <div onClick={()=>setLightbox(null)} style={{
+          position:"fixed", inset:0, background:"rgba(0,0,0,0.95)",
+          zIndex:500, display:"flex", alignItems:"center",
+          justifyContent:"center", padding:20,
+        }}>
+          <button onClick={()=>setLightbox(null)} style={{
+            position:"absolute", top:20, right:20,
+            background:"rgba(255,255,255,0.1)", border:"none",
+            color:white, width:44, height:44, borderRadius:"50%",
+            fontSize:20, cursor:"pointer", display:"flex",
+            alignItems:"center", justifyContent:"center",
+          }}>✕</button>
+          <img src={lightbox} alt="Full view" onClick={e=>e.stopPropagation()} style={{
+            maxWidth:"100%", maxHeight:"90vh", objectFit:"contain",
+            animation:"fadeIn 0.2s ease",
+          }}/>
+          <style>{`@keyframes fadeIn{from{opacity:0;transform:scale(0.95)}to{opacity:1;transform:scale(1)}}`}</style>
+        </div>
+      )}
 
       {/* DELETE MODAL */}
       {confirmDel&&(
@@ -467,34 +496,33 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
             </div>
             <div style={{ padding:"20px 24px", display:"flex", flexDirection:"column", gap:16, flex:1, overflowY:"auto" }}>
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
-  <Fld label="Location" error={dErr.location}>
-    <select style={sSt("location")} value={dForm.location} onChange={e=>setD("location",e.target.value)}>
-      <option value="">Select...</option>
-      {LOCS.map(l=><option key={l}>{l}</option>)}
-    </select>
-  </Fld>
-  <Fld label="Element" error={dErr.element}>
-    <select style={sSt("element")} value={dForm.element} onChange={e=>setD("element",e.target.value)}>
-      <option value="">Select...</option>
-      {ELEMENTS.map(e=><option key={e}>{e}</option>)}
-    </select>
-  </Fld>
-</div>
-
-<div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
-  <Fld label="Defect Type" error={dErr.defectType}>
-    <select style={sSt("defectType")} value={dForm.defectType} onChange={e=>setD("defectType",e.target.value)}>
-      <option value="">Select...</option>
-      {DEFECT_TYPES.map(d=><option key={d}>{d}</option>)}
-    </select>
-  </Fld>
-  <Fld label="Category" error={dErr.category}>
-    <select style={sSt("category")} value={dForm.category} onChange={e=>setD("category",e.target.value)}>
-      <option value="">Select...</option>
-      {CATS.map(c=><option key={c}>{c}</option>)}
-    </select>
-  </Fld>
-</div>
+                <Fld label="Location" error={dErr.location}>
+                  <select style={sSt("location")} value={dForm.location} onChange={e=>setD("location",e.target.value)}>
+                    <option value="">Select...</option>
+                    {LOCS.map(l=><option key={l}>{l}</option>)}
+                  </select>
+                </Fld>
+                <Fld label="Element" error={dErr.element}>
+                  <select style={sSt("element")} value={dForm.element} onChange={e=>setD("element",e.target.value)}>
+                    <option value="">Select...</option>
+                    {ELEMENTS.map(e=><option key={e}>{e}</option>)}
+                  </select>
+                </Fld>
+              </div>
+              <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:12 }}>
+                <Fld label="Defect Type" error={dErr.defectType}>
+                  <select style={sSt("defectType")} value={dForm.defectType} onChange={e=>setD("defectType",e.target.value)}>
+                    <option value="">Select...</option>
+                    {DEFECT_TYPES.map(d=><option key={d}>{d}</option>)}
+                  </select>
+                </Fld>
+                <Fld label="Category" error={dErr.category}>
+                  <select style={sSt("category")} value={dForm.category} onChange={e=>setD("category",e.target.value)}>
+                    <option value="">Select...</option>
+                    {CATS.map(c=><option key={c}>{c}</option>)}
+                  </select>
+                </Fld>
+              </div>
               <Fld label="Severity">
                 <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:6 }}>
                   {["Low","Medium","High","Critical"].map(s=>(
@@ -504,7 +532,6 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
                       letterSpacing:0.5, textTransform:"uppercase",
                       background: dForm.severity===s ? SEV[s].bar : iosBg,
                       color:      dForm.severity===s ? white : sub,
-                      transition:"all 0.15s ease",
                     }}>{s}</button>
                   ))}
                 </div>
@@ -538,14 +565,14 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
                 </div>
               </Fld>
               {dForm.severity&&SEV[dForm.severity]&&(
-                <div style={{ padding:"10px 14px", background:SEV[dForm.severity].bg, borderLeft:`3px solid ${SEV[dForm.severity].bar}`, fontSize:12, color:SEV[dForm.severity].label, fontWeight:600, letterSpacing:0.3 }}>
+                <div style={{ padding:"10px 14px", background:SEV[dForm.severity].bg, borderLeft:`3px solid ${SEV[dForm.severity].bar}`, fontSize:12, color:SEV[dForm.severity].label, fontWeight:600 }}>
                   {dForm.severity==="Critical"?"Critical — escalate immediately":dForm.severity==="High"?"High — resolve within 48h":dForm.severity==="Medium"?"Medium — schedule this week":"Low — routine maintenance"}
                 </div>
               )}
             </div>
             <div style={{ padding:"16px 24px 40px", borderTop:"1px solid #E5E5EA", display:"flex", gap:10 }}>
               <button onClick={()=>setShowDF(false)} style={{ flex:1, padding:"14px", background:iosBg, color:sub, border:"none", fontWeight:600, fontSize:14, cursor:"pointer", fontFamily:"inherit" }}>Cancel</button>
-              <button onClick={addDefect} disabled={saving} style={{ flex:2, padding:"14px", background:black, color:white, border:"none", fontWeight:700, fontSize:14, cursor:"pointer", fontFamily:"inherit", opacity:saving?0.7:1, letterSpacing:0.5 }}>
+              <button onClick={addDefect} disabled={saving} style={{ flex:2, padding:"14px", background:black, color:white, border:"none", fontWeight:700, fontSize:14, cursor:"pointer", fontFamily:"inherit", opacity:saving?0.7:1 }}>
                 {saving?"Saving...":"Save Defect"}
               </button>
             </div>
