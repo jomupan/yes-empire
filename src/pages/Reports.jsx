@@ -441,29 +441,48 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
 
         <style>{`
   @media print {
+    /* Hide sidebar and buttons */
     button { display: none !important; }
 
-    /* Page break after every group of 4 defects */
+    /* Hide everything outside the report */
+    body > * { display: none !important; }
+    #root { display: block !important; }
+    #root > * { display: none !important; }
+    #root > div > div > div:last-child { display: block !important; }
+
+    /* Page setup */
+    @page {
+      size: A4;
+      margin: 10mm;
+    }
+
+    /* Each page of 4 defects */
     .defect-page {
-      page-break-after: always;
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 4px !important;
+      page-break-after: always !important;
+      width: 100% !important;
     }
 
-    /* Keep each defect together */
+    /* Each defect card */
     .defect-card {
-      page-break-inside: avoid;
+      page-break-inside: avoid !important;
+      border: 1px solid #ccc !important;
     }
 
-    /* Cover on its own page */
+    /* Cover page */
     .cover-section {
-      page-break-after: always;
+      page-break-after: always !important;
     }
 
-    /* Floor plan on its own page */
+    /* Floor plan page */
     .floorplan-section {
-      page-break-after: always;
+      page-break-after: always !important;
     }
 
-    body { background: white !important; }
+    /* Remove background colors for printing */
+    body { background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   }
 `}</style>
 
