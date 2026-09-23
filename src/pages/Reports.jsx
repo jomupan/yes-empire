@@ -266,10 +266,93 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
     <div style={{ background:white, padding:24, textAlign:"center", color:sub, fontSize:14 }}>No defects recorded.</div>
   ) : (
     <div>
-      {/* GROUP INTO PAGES OF 4 */}
-      {Array.from({ length: Math.ceil(def.length / 4) }, (_, pageIdx) => (
-        <div key={pageIdx} className="defect-page" style={{ marginBottom:1 }}>
-          {def.slice(pageIdx * 4, (pageIdx + 1) * 4).map((d) => {
+  {Array.from({ length: Math.ceil(def.length / 4) }, (_, pageIdx) => (
+    <div key={pageIdx} className="defect-page" style={{
+      display:"grid",
+      gridTemplateColumns:"1fr 1fr",
+      gap:1,
+      background:"#E5E5EA",
+      marginBottom:1,
+    }}>
+      {def.slice(pageIdx * 4, (pageIdx + 1) * 4).map((d) => {
+        const photos  = getDefectPhotos(d);
+        const defNum  = def.indexOf(d) + 1;
+        const marker  = markers[defNum - 1];
+
+        return (
+          <div key={d.id} className="defect-card" style={{ background:white }}>
+
+            {/* DEFECT TITLE */}
+            <div style={{ padding:"8px 14px", background:"#F5F5F5", borderLeft:`4px solid ${SEV[d.severity]?.bar||gold}` }}>
+              <div style={{ fontWeight:800, fontSize:12, color:txt, letterSpacing:0.5 }}>DEFECT {defNum}</div>
+            </div>
+
+            <div style={{ padding:"12px 14px" }}>
+
+              {/* TABLE WITH FLOOR PLAN */}
+              <div style={{ border:"1px solid #E5E5EA", display:"flex", marginBottom: photos.length>0?12:0 }}>
+
+                {/* LEFT — details */}
+                <div style={{ flex:1, borderRight: ri.floorPlan&&marker?"1px solid #E5E5EA":"none" }}>
+                  {[
+                    {l:"Location",    v:d.location},
+                    {l:"Element",     v:d.element||"-"},
+                    {l:"Defect",      v:d.defectType||d.category},
+                    {l:"Description", v:d.description},
+                  ].map((r,i)=>(
+                    <div key={r.l} style={{ display:"flex", borderBottom: i<3?"1px solid #E5E5EA":"none", minHeight: i===3?60:36 }}>
+                      <div style={{ width:80, padding:"6px 10px", background:"#F9F9F9", fontSize:9, fontWeight:700, color:"#000", letterSpacing:0.5, textTransform:"uppercase", borderRight:"1px solid #E5E5EA", flexShrink:0 }}>
+                        {r.l}
+                      </div>
+                      <div style={{ padding:"6px 10px", fontSize:11, color:txt, flex:1, lineHeight:1.5 }}>
+                        {r.v}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* RIGHT — floor plan with only this marker */}
+                {ri.floorPlan && marker && (
+                  <div style={{ width:90, flexShrink:0, position:"relative", overflow:"hidden" }}>
+                    <img src={ri.floorPlan} alt="Floor Plan" style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }}/>
+                    <div style={{
+                      position:"absolute",
+                      left:`${marker.x}%`, top:`${marker.y}%`,
+                      transform:"translate(-50%,-50%)",
+                      width:18, height:18, borderRadius:"50%",
+                      background:red, color:white,
+                      display:"flex", alignItems:"center", justifyContent:"center",
+                      fontSize:9, fontWeight:900,
+                      border:"2px solid white",
+                      boxShadow:"0 2px 8px rgba(0,0,0,0.5)",
+                      zIndex:10,
+                    }}>
+                      {defNum}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* PHOTOS */}
+              {photos.length>0&&(
+                <div>
+                  <div style={{ fontSize:9, fontWeight:700, color:sub, letterSpacing:1, textTransform:"uppercase", marginBottom:6 }}>Photos</div>
+                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:4 }}>
+                    {photos.slice(0,2).map((p,pi)=>(
+                      <div key={pi} style={{ aspectRatio:"4/3", overflow:"hidden", border:"1px solid #E5E5EA" }}>
+                        <img src={p} alt={`Photo ${pi+1}`} style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  ))}
+</div>
             const photos  = getDefectPhotos(d);
             const defNum  = def.indexOf(d) + 1;
             const marker  = markers[defNum - 1];
