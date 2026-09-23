@@ -26,6 +26,7 @@ export default function App() {
   const [reportId,    setReportId]    = useState(null);
   const [animKey,     setAnimKey]     = useState(0);
   const [menuOpen,    setMenuOpen]    = useState(false);
+  const [history,     setHistory]     = useState([]);
   const [screenSize,  setScreenSize]  = useState(
     window.innerWidth >= 1280 ? "laptop" :
     window.innerWidth >= 768  ? "tablet" : "mobile"
@@ -53,10 +54,27 @@ export default function App() {
     return () => unsub();
   }, [user]);
 
+  useEffect(() => {
+    const handlePopState = () => {
+      setHistory(h => {
+        if (h.length === 0) return h;
+        const prev = h[h.length - 1];
+        setPage(prev);
+        setAnimKey(k => k + 1);
+        setMenuOpen(false);
+        return h.slice(0, -1);
+      });
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, []);
+
   const nav = (p) => {
+    setHistory(h => [...h, page]);
     setPage(p);
     setAnimKey(k => k + 1);
     setMenuOpen(false);
+    window.history.pushState({ page: p }, "");
   };
 
   const goDetail = (id) => {
