@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from "react";
 import { db } from "../firebase";
 import { doc, updateDoc } from "firebase/firestore";
-import { white, gold, txt, sub, iosBg, iosSep, red, SEV } from "../config";
+import { white, gold, txt, sub, iosBg, red, SEV } from "../config";
 import Card from "../components/Card";
 import Pill from "../components/Pill";
 import EmptyState from "../components/EmptyState";
@@ -103,8 +103,8 @@ function SignaturePad({ label, sigKey, savedSig, onSave }) {
       <div style={{ display:"flex", gap:8 }}>
         {hasSig && (
           <>
-            <button onClick={clear} style={{ flex:1, padding:"8px", background:"#FF3B3010", color:"#FF3B30", border:"none", fontWeight:600, fontSize:11, cursor:"pointer", fontFamily:"inherit", letterSpacing:0.5 }}>Clear</button>
-            <button onClick={save} style={{ flex:2, padding:"8px", background: saved?"#34C75920":gold, color: saved?"#34C759":white, border:"none", fontWeight:700, fontSize:11, cursor:"pointer", fontFamily:"inherit", letterSpacing:0.5 }}>
+            <button onClick={clear} style={{ flex:1, padding:"8px", background:"#FF3B3010", color:"#FF3B30", border:"none", fontWeight:600, fontSize:11, cursor:"pointer", fontFamily:"inherit" }}>Clear</button>
+            <button onClick={save} style={{ flex:2, padding:"8px", background: saved?"#34C75920":gold, color: saved?"#34C759":white, border:"none", fontWeight:700, fontSize:11, cursor:"pointer", fontFamily:"inherit" }}>
               {saved?"✓ Saved":"Save Signature"}
             </button>
           </>
@@ -160,11 +160,10 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
   const pad = isLaptop ? "0 40px" : "0 16px";
 
   if (reportId && ri) {
-    const def = ri.defects||[];
-    const res = def.filter(d=>d.status==="Resolved").length;
-    const op  = def.filter(d=>d.status==="Open").length;
-    const ip  = def.filter(d=>d.status==="In Progress").length;
-    const pct = def.length>0 ? Math.round((res/def.length)*100) : 0;
+    const def     = ri.defects||[];
+    const res     = def.filter(d=>d.status==="Resolved").length;
+    const op      = def.filter(d=>d.status==="Open").length;
+    const ip      = def.filter(d=>d.status==="In Progress").length;
     const markers = ri.floorPlanMarkers || [];
 
     const getDefectPhotos = (d) => {
@@ -173,12 +172,149 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
       return [];
     };
 
-    const groupedDefs = def.reduce((acc, d) => {
-      const loc = d.location || "Other";
-      if (!acc[loc]) acc[loc] = [];
-      acc[loc].push(d);
-      return acc;
-    }, {});
+    const defGroups = Array.from({ length: Math.ceil(def.length / 4) }, (_, i) =>
+      def.slice(i * 4, (i + 1) * 4)
+    );
+
+    const handlePrint = () => {
+      const printWindow = window.open("", "_blank");
+
+      const html = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <title>${ri.title} — Defect Report</title>
+          <style>
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+            body { font-family: Arial, sans-serif; background: white; }
+            @page { size: A4; margin: 10mm; }
+            .cover { padding: 20px; page-break-after: always; }
+            .cover-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 16px; margin-bottom: 16px; }
+            .cover-logo { width: 120px; height: 48px; object-fit: contain; }
+            .cover-row { display: flex; gap: 12px; padding: 8px 0; border-bottom: 1px solid #eee; }
+            .cover-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #666; min-width: 120px; }
+            .cover-val { font-size: 12px; color: #000; }
+            .summary { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: #eee; margin-top: 16px; }
+            .summary-box { background: white; padding: 14px; text-align: center; }
+            .summary-num { font-size: 24px; font-weight: 800; line-height: 1; }
+            .summary-lbl { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-top: 4px; }
+            .floorplan { padding: 20px; page-break-after: always; }
+            .floorplan-title { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #666; margin-bottom: 10px; }
+            .floorplan img { width: 100%; border: 1px solid #eee; display: block; }
+            .section-header { background: #000; color: white; padding: 10px 16px; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 4px; }
+            .defect-page { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; page-break-after: always; padding: 4px; }
+            .defect-card { border: 1px solid #ddd; background: white; }
+            .defect-header { padding: 7px 12px; background: #f5f5f5; font-size: 11px; font-weight: 800; letter-spacing: 0.5px; border-left: 3px solid #F07C1E; }
+            .defect-body { padding: 10px 12px; }
+            .defect-table { border: 1px solid #eee; display: flex; margin-bottom: 10px; }
+            .defect-fields { flex: 1; }
+            .defect-row { display: flex; border-bottom: 1px solid #eee; min-height: 28px; }
+            .defect-row:last-child { border-bottom: none; min-height: 50px; }
+            .defect-key { width: 75px; padding: 5px 8px; background: #f9f9f9; font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; border-right: 1px solid #eee; flex-shrink: 0; }
+            .defect-val { padding: 5px 8px; font-size: 10px; flex: 1; line-height: 1.4; }
+            .fp-thumb { width: 85px; flex-shrink: 0; position: relative; overflow: hidden; border-left: 1px solid #eee; }
+            .fp-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+            .fp-marker { position: absolute; border-radius: 50%; background: red; color: white; display: flex; align-items: center; justify-content: center; font-size: 8px; font-weight: 900; border: 1.5px solid white; box-shadow: 0 1px 4px rgba(0,0,0,0.5); transform: translate(-50%,-50%); width: 16px; height: 16px; }
+            .photos-title { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #666; margin-bottom: 6px; }
+            .photos-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+            .photos-grid img { width: 100%; aspect-ratio: 4/3; object-fit: cover; border: 1px solid #eee; display: block; }
+          </style>
+        </head>
+        <body>
+
+          <!-- COVER -->
+          <div class="cover">
+            <div class="cover-header">
+              <img class="cover-logo" src="${window.location.origin}/BENAMORA.jpeg" alt="Benamora"/>
+              <div style="text-align:right">
+                <div style="font-size:14px;font-weight:900">DEFECT INSPECTION REPORT</div>
+                <div style="font-size:11px;color:#666;margin-top:4px">${ri.date}</div>
+              </div>
+            </div>
+            ${[
+              ["Project Title", ri.title],
+              ["Client Name",   ri.client],
+              ["Property Type", ri.propertyType],
+              ["Inspector",     ri.inspector],
+              ["Address",       `${ri.address}, ${ri.postcode}`],
+              ["City / State",  `${ri.city}, ${ri.state}`],
+            ].map(([l,v])=>`
+              <div class="cover-row">
+                <div class="cover-label">${l}</div>
+                <div class="cover-val">: ${v||"-"}</div>
+              </div>
+            `).join("")}
+            <div class="summary">
+              <div class="summary-box"><div class="summary-num">${def.length}</div><div class="summary-lbl">Total Defects</div></div>
+              <div class="summary-box"><div class="summary-num" style="color:red">${op}</div><div class="summary-lbl">Open</div></div>
+              <div class="summary-box"><div class="summary-num" style="color:#AF52DE">${ip}</div><div class="summary-lbl">In Progress</div></div>
+              <div class="summary-box"><div class="summary-num" style="color:#34C759">${res}</div><div class="summary-lbl">Resolved</div></div>
+            </div>
+          </div>
+
+          <!-- FLOOR PLAN -->
+          ${ri.floorPlan ? `
+            <div class="floorplan">
+              <div class="floorplan-title">Floor Plan — Property Layout Overview</div>
+              <img src="${ri.floorPlan}" alt="Floor Plan"/>
+            </div>
+          ` : ""}
+
+          <!-- DEFECT CASES -->
+          <div class="section-header">Defect Cases</div>
+
+          ${defGroups.map(group => `
+            <div class="defect-page">
+              ${group.map(d => {
+                const defNum = def.indexOf(d) + 1;
+                const marker = markers[defNum - 1];
+                const photos = getDefectPhotos(d);
+                return `
+                  <div class="defect-card">
+                    <div class="defect-header">DEFECT ${defNum}</div>
+                    <div class="defect-body">
+                      <div class="defect-table">
+                        <div class="defect-fields">
+                          ${[
+                            ["Location",    d.location||"-"],
+                            ["Element",     d.element||d.category||"-"],
+                            ["Defect",      d.defectType||d.category||"-"],
+                            ["Description", d.description||"-"],
+                          ].map(([k,v])=>`
+                            <div class="defect-row">
+                              <div class="defect-key">${k}</div>
+                              <div class="defect-val">${v}</div>
+                            </div>
+                          `).join("")}
+                        </div>
+                        ${ri.floorPlan && marker ? `
+                          <div class="fp-thumb">
+                            <img src="${ri.floorPlan}" alt="fp"/>
+                            <div class="fp-marker" style="left:${marker.x}%;top:${marker.y}%">${defNum}</div>
+                          </div>
+                        ` : ""}
+                      </div>
+                      ${photos.length > 0 ? `
+                        <div class="photos-title">Photos</div>
+                        <div class="photos-grid">
+                          ${photos.slice(0,2).map(p=>`<img src="${p}" alt="photo"/>`).join("")}
+                        </div>
+                      ` : ""}
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          `).join("")}
+
+        </body>
+        </html>
+      `;
+
+      printWindow.document.write(html);
+      printWindow.document.close();
+      setTimeout(() => printWindow.print(), 800);
+    };
 
     return (
       <div style={{ background:iosBg, minHeight:"100vh", paddingBottom:40 }}>
@@ -194,8 +330,8 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
               <div style={{ fontWeight:800, fontSize: isLaptop?28:22, color:white, letterSpacing:-0.5, marginBottom:10 }}>{ri.title}</div>
               <Pill type="insp" value={ri.status}/>
             </div>
-            <button onClick={()=>window.print()} style={{ background:gold, color:white, border:"none", padding:"11px 20px", fontWeight:700, fontSize:11, cursor:"pointer", fontFamily:"inherit", letterSpacing:1, textTransform:"uppercase", flexShrink:0 }}>
-              Print
+            <button onClick={handlePrint} style={{ background:gold, color:white, border:"none", padding:"11px 20px", fontWeight:700, fontSize:11, cursor:"pointer", fontFamily:"inherit", letterSpacing:1, textTransform:"uppercase", flexShrink:0 }}>
+              Print PDF
             </button>
           </div>
         </div>
@@ -209,7 +345,7 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
                 <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain" }}/>
               </div>
               <div style={{ textAlign:"right" }}>
-                <div style={{ fontWeight:900, fontSize:14, color:"#000", letterSpacing:0.5 }}>DEFECT INSPECTION REPORT</div>
+                <div style={{ fontWeight:900, fontSize:14, color:"#000" }}>DEFECT INSPECTION REPORT</div>
                 <div style={{ fontSize:11, color:sub, marginTop:2 }}>{ri.date}</div>
               </div>
             </div>
@@ -245,9 +381,9 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
             ))}
           </div>
 
-          {/* FLOOR PLAN — clean, no markers */}
-{ri.floorPlan&&(
-  <div className="floorplan-section" style={{ background:white, padding:"20px", marginBottom:1 }}>
+          {/* FLOOR PLAN */}
+          {ri.floorPlan&&(
+            <div className="floorplan-section" style={{ background:white, padding:"20px", marginBottom:1 }}>
               <div style={{ fontSize:11, fontWeight:700, color:sub, letterSpacing:1.5, textTransform:"uppercase", marginBottom:6 }}>Floor Plan</div>
               <div style={{ fontSize:12, color:sub, marginBottom:12 }}>Property layout overview</div>
               <div style={{ border:"1px solid #E5E5EA", overflow:"hidden" }}>
@@ -257,235 +393,95 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
           )}
 
           {/* DEFECT CASES */}
-<div style={{ marginBottom:1 }}>
-  <div style={{ background:"#000", padding:"14px 20px", marginBottom:1 }}>
-    <div style={{ fontSize:11, fontWeight:700, color:white, letterSpacing:2, textTransform:"uppercase" }}>Defect Cases</div>
-  </div>
-
-  {def.length===0 ? (
-    <div style={{ background:white, padding:24, textAlign:"center", color:sub, fontSize:14 }}>No defects recorded.</div>
-  ) : (
-    <div>
-  {Array.from({ length: Math.ceil(def.length / 4) }, (_, pageIdx) => (
-    <div key={pageIdx} className="defect-page" style={{
-      display:"grid",
-      gridTemplateColumns:"1fr 1fr",
-      gap:1,
-      background:"#E5E5EA",
-      marginBottom:1,
-    }}>
-      {def.slice(pageIdx * 4, (pageIdx + 1) * 4).map((d) => {
-        const photos  = getDefectPhotos(d);
-        const defNum  = def.indexOf(d) + 1;
-        const marker  = markers[defNum - 1];
-
-        return (
-          <div key={d.id} className="defect-card" style={{ background:white }}>
-
-            {/* DEFECT TITLE */}
-            <div style={{ padding:"8px 14px", background:"#F5F5F5", borderLeft:`4px solid ${SEV[d.severity]?.bar||gold}` }}>
-              <div style={{ fontWeight:800, fontSize:12, color:txt, letterSpacing:0.5 }}>DEFECT {defNum}</div>
+          <div style={{ marginBottom:1 }}>
+            <div style={{ background:"#000", padding:"14px 20px", marginBottom:1 }}>
+              <div style={{ fontSize:11, fontWeight:700, color:white, letterSpacing:2, textTransform:"uppercase" }}>Defect Cases</div>
             </div>
 
-            <div style={{ padding:"12px 14px" }}>
+            {def.length===0 ? (
+              <div style={{ background:white, padding:24, textAlign:"center", color:sub, fontSize:14 }}>No defects recorded.</div>
+            ) : (
+              <div>
+                {defGroups.map((group, pageIdx) => (
+                  <div key={pageIdx} className="defect-page" style={{
+                    display:"grid", gridTemplateColumns:"1fr 1fr",
+                    gap:1, background:"#E5E5EA", marginBottom:1,
+                  }}>
+                    {group.map((d) => {
+                      const photos  = getDefectPhotos(d);
+                      const defNum  = def.indexOf(d) + 1;
+                      const marker  = markers[defNum - 1];
 
-              {/* TABLE WITH FLOOR PLAN */}
-              <div style={{ border:"1px solid #E5E5EA", display:"flex", marginBottom: photos.length>0?12:0 }}>
-
-                {/* LEFT — details */}
-                <div style={{ flex:1, borderRight: ri.floorPlan&&marker?"1px solid #E5E5EA":"none" }}>
-                  {[
-                    {l:"Location",    v:d.location},
-                    {l:"Element",     v:d.element||"-"},
-                    {l:"Defect",      v:d.defectType||d.category},
-                    {l:"Description", v:d.description},
-                  ].map((r,i)=>(
-                    <div key={r.l} style={{ display:"flex", borderBottom: i<3?"1px solid #E5E5EA":"none", minHeight: i===3?60:36 }}>
-                      <div style={{ width:80, padding:"6px 10px", background:"#F9F9F9", fontSize:9, fontWeight:700, color:"#000", letterSpacing:0.5, textTransform:"uppercase", borderRight:"1px solid #E5E5EA", flexShrink:0 }}>
-                        {r.l}
-                      </div>
-                      <div style={{ padding:"6px 10px", fontSize:11, color:txt, flex:1, lineHeight:1.5 }}>
-                        {r.v}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* RIGHT — floor plan with only this marker */}
-                {ri.floorPlan && marker && (
-                  <div style={{ width:90, flexShrink:0, position:"relative", overflow:"hidden" }}>
-                    <img src={ri.floorPlan} alt="Floor Plan" style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }}/>
-                    <div style={{
-                      position:"absolute",
-                      left:`${marker.x}%`, top:`${marker.y}%`,
-                      transform:"translate(-50%,-50%)",
-                      width:18, height:18, borderRadius:"50%",
-                      background:red, color:white,
-                      display:"flex", alignItems:"center", justifyContent:"center",
-                      fontSize:9, fontWeight:900,
-                      border:"2px solid white",
-                      boxShadow:"0 2px 8px rgba(0,0,0,0.5)",
-                      zIndex:10,
-                    }}>
-                      {defNum}
-                    </div>
+                      return (
+                        <div key={d.id} className="defect-card" style={{ background:white }}>
+                          <div style={{ padding:"8px 14px", background:"#F5F5F5", borderLeft:`4px solid ${SEV[d.severity]?.bar||gold}` }}>
+                            <div style={{ fontWeight:800, fontSize:12, color:txt, letterSpacing:0.5 }}>DEFECT {defNum}</div>
+                          </div>
+                          <div style={{ padding:"12px 14px" }}>
+                            <div style={{ border:"1px solid #E5E5EA", display:"flex", marginBottom: photos.length>0?12:0 }}>
+                              <div style={{ flex:1, borderRight: ri.floorPlan&&marker?"1px solid #E5E5EA":"none" }}>
+                                {[
+                                  {l:"Location",    v:d.location},
+                                  {l:"Element",     v:d.element||"-"},
+                                  {l:"Defect",      v:d.defectType||d.category},
+                                  {l:"Description", v:d.description},
+                                ].map((r,i)=>(
+                                  <div key={r.l} style={{ display:"flex", borderBottom: i<3?"1px solid #E5E5EA":"none", minHeight: i===3?60:36 }}>
+                                    <div style={{ width:80, padding:"6px 10px", background:"#F9F9F9", fontSize:9, fontWeight:700, color:"#000", letterSpacing:0.5, textTransform:"uppercase", borderRight:"1px solid #E5E5EA", flexShrink:0 }}>
+                                      {r.l}
+                                    </div>
+                                    <div style={{ padding:"6px 10px", fontSize:11, color:txt, flex:1, lineHeight:1.5 }}>
+                                      {r.v}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                              {ri.floorPlan && marker && (
+                                <div style={{ width:90, flexShrink:0, position:"relative", overflow:"hidden" }}>
+                                  <img src={ri.floorPlan} alt="Floor Plan" style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }}/>
+                                  <div style={{
+                                    position:"absolute",
+                                    left:`${marker.x}%`, top:`${marker.y}%`,
+                                    transform:"translate(-50%,-50%)",
+                                    width:18, height:18, borderRadius:"50%",
+                                    background:red, color:white,
+                                    display:"flex", alignItems:"center", justifyContent:"center",
+                                    fontSize:9, fontWeight:900,
+                                    border:"2px solid white",
+                                    boxShadow:"0 2px 8px rgba(0,0,0,0.5)",
+                                    zIndex:10,
+                                  }}>
+                                    {defNum}
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                            {photos.length>0&&(
+                              <div>
+                                <div style={{ fontSize:9, fontWeight:700, color:sub, letterSpacing:1, textTransform:"uppercase", marginBottom:6 }}>Photos</div>
+                                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:4 }}>
+                                  {photos.slice(0,2).map((p,pi)=>(
+                                    <div key={pi} style={{ aspectRatio:"4/3", overflow:"hidden", border:"1px solid #E5E5EA" }}>
+                                      <img src={p} alt={`Photo ${pi+1}`} style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                )}
+                ))}
               </div>
-
-              {/* PHOTOS */}
-              {photos.length>0&&(
-                <div>
-                  <div style={{ fontSize:9, fontWeight:700, color:sub, letterSpacing:1, textTransform:"uppercase", marginBottom:6 }}>Photos</div>
-                  <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:4 }}>
-                    {photos.slice(0,2).map((p,pi)=>(
-                      <div key={pi} style={{ aspectRatio:"4/3", overflow:"hidden", border:"1px solid #E5E5EA" }}>
-                        <img src={p} alt={`Photo ${pi+1}`} style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            )}
           </div>
-        );
-      })}
-    </div>
-  ))}
-</div>
-            const photos  = getDefectPhotos(d);
-            const defNum  = def.indexOf(d) + 1;
-            const marker  = markers[defNum - 1];
 
-            return (
-              <div key={d.id} className="defect-card" style={{ background:white, marginBottom:1 }}>
-
-                {/* DEFECT TITLE */}
-                <div style={{ padding:"10px 20px", background:"#F5F5F5", borderLeft:`4px solid ${SEV[d.severity]?.bar||gold}` }}>
-                  <div style={{ fontWeight:800, fontSize:13, color:txt, letterSpacing:0.5 }}>DEFECT {defNum}</div>
-                </div>
-
-                <div style={{ padding:"16px 20px" }}>
-
-                  {/* TABLE WITH FLOOR PLAN ON RIGHT */}
-                  <div style={{ border:"1px solid #E5E5EA", display:"flex", marginBottom: photos.length>0?16:0 }}>
-
-                    {/* LEFT — details */}
-                    <div style={{ flex:1, borderRight: ri.floorPlan&&marker?"1px solid #E5E5EA":"none" }}>
-                      {[
-                        {l:"Location",    v:d.location},
-                        {l:"Element",     v:d.element||"-"},
-                        {l:"Defect",      v:d.defectType||d.category},
-                        {l:"Description", v:d.description},
-                      ].map((r,i)=>(
-                        <div key={r.l} style={{ display:"flex", borderBottom: i<3?"1px solid #E5E5EA":"none", minHeight: i===3?80:40 }}>
-                          <div style={{ width:110, padding:"10px 14px", background:"#F9F9F9", fontSize:11, fontWeight:700, color:"#000", letterSpacing:0.5, textTransform:"uppercase", borderRight:"1px solid #E5E5EA", flexShrink:0 }}>
-                            {r.l}
-                          </div>
-                          <div style={{ padding:"10px 14px", fontSize:13, color:txt, flex:1, lineHeight:1.5 }}>
-                            {r.v}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {/* RIGHT — floor plan with only this marker */}
-                    {ri.floorPlan && marker && (
-                      <div style={{ width:160, flexShrink:0, position:"relative", overflow:"hidden" }}>
-                        <img src={ri.floorPlan} alt="Floor Plan" style={{ width:"100%", height:"100%", objectFit:"cover", display:"block" }}/>
-                        <div style={{
-                          position:"absolute",
-                          left:`${marker.x}%`, top:`${marker.y}%`,
-                          transform:"translate(-50%,-50%)",
-                          width:22, height:22, borderRadius:"50%",
-                          background:red, color:white,
-                          display:"flex", alignItems:"center", justifyContent:"center",
-                          fontSize:11, fontWeight:900,
-                          border:"2px solid white",
-                          boxShadow:"0 2px 8px rgba(0,0,0,0.5)",
-                          zIndex:10,
-                        }}>
-                          {defNum}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* PHOTOS */}
-                  {photos.length>0&&(
-                    <div>
-                      <div style={{ fontSize:10, fontWeight:700, color:sub, letterSpacing:1, textTransform:"uppercase", marginBottom:10 }}>Photos</div>
-                      <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:8 }}>
-                        {photos.map((p,pi)=>(
-                          <div key={pi} style={{ aspectRatio:"4/3", overflow:"hidden", border:"1px solid #E5E5EA" }}>
-                            <img src={p} alt={`Photo ${pi+1}`} style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      ))}
-    </div>
-  )}
-</div>
-
-                    {/* SIGNATURES */}
+          {/* SIGNATURES */}
           <SignatureSection reportId={ri.id} inspections={inspections}/>
 
         </div>
-
-        <style>{`
-  @media print {
-    /* Hide sidebar and buttons */
-    button { display: none !important; }
-
-    /* Hide everything outside the report */
-    body > * { display: none !important; }
-    #root { display: block !important; }
-    #root > * { display: none !important; }
-    #root > div > div > div:last-child { display: block !important; }
-
-    /* Page setup */
-    @page {
-      size: A4;
-      margin: 10mm;
-    }
-
-    /* Each page of 4 defects */
-    .defect-page {
-      display: grid !important;
-      grid-template-columns: 1fr 1fr !important;
-      gap: 4px !important;
-      page-break-after: always !important;
-      width: 100% !important;
-    }
-
-    /* Each defect card */
-    .defect-card {
-      page-break-inside: avoid !important;
-      border: 1px solid #ccc !important;
-    }
-
-    /* Cover page */
-    .cover-section {
-      page-break-after: always !important;
-    }
-
-    /* Floor plan page */
-    .floorplan-section {
-      page-break-after: always !important;
-    }
-
-    /* Remove background colors for printing */
-    body { background: white !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  }
-`}</style>
-
       </div>
     );
   }
@@ -527,4 +523,4 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
       </div>
     </div>
   );
-} 
+}
