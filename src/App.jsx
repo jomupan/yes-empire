@@ -83,7 +83,7 @@ export default function App() {
   if (authLoading) return (
     <div style={{ minHeight:"100vh", background:black, display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'Inter',-apple-system,sans-serif" }}>
       <div style={{ textAlign:"center" }}>
-        <div style={{ width:56, height:32, margin:"0 auto 16px", overflow:"hidden" }}>
+        <div style={{ width:80, height:36, margin:"0 auto 16px", overflow:"hidden" }}>
           <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain" }}/>
         </div>
         <div style={{ color:gold, fontSize:11, fontWeight:700, letterSpacing:3, textTransform:"uppercase" }}>Loading...</div>
@@ -111,20 +111,20 @@ export default function App() {
   };
 
   return (
-  <div style={{ minHeight:"100vh", background:"#F2F2F7", fontFamily:"'Inter',-apple-system,sans-serif", width:"100%", overflowX:"hidden" }}>
-    {isLaptop ? (
-      <div style={{ display:"flex", minHeight:"100vh", width:"100%" }}>
-        <div className="sidebar-nav" style={{ width:SIDEBAR_W, flexShrink:0, position:"fixed", top:0, left:0, bottom:0, zIndex:100 }}>
-          <BottomNav page={page} nav={nav} user={user} logout={logout} open={true} setOpen={()=>{}} isLaptop={true}/>
+    <div style={{ minHeight:"100vh", background:"#F2F2F7", fontFamily:"'Inter',-apple-system,sans-serif", width:"100%", overflowX:"hidden" }}>
+      {isLaptop ? (
+        <div style={{ display:"flex", minHeight:"100vh", width:"100%" }}>
+          <div className="sidebar-nav" style={{ width:SIDEBAR_W, flexShrink:0, position:"fixed", top:0, left:0, bottom:0, zIndex:100 }}>
+            <BottomNav page={page} nav={nav} user={user} logout={logout} open={true} setOpen={()=>{}} isLaptop={true}/>
+          </div>
+          <div className="main-content" style={{ marginLeft:SIDEBAR_W, flex:1, minHeight:"100vh", minWidth:0, overflow:"hidden" }}>
+            <div key={animKey} style={{ ...slideStyle, width:"100%", minHeight:"100vh" }}>
+              {renderPage()}
+            </div>
+          </div>
         </div>
-        <div className="main-content" style={{ marginLeft:SIDEBAR_W, flex:1, minHeight:"100vh", minWidth:0, overflow:"hidden" }}>
-        <div key={animKey} style={{ ...slideStyle, width:"100%", minHeight:"100vh" }}>
-          {renderPage()}
-       </div>
-    </div>
-      </div>
-    ) : (
-      <div style={{ width:"100%", position:"relative" }}>
+      ) : (
+        <div style={{ width:"100%", position:"relative" }}>
           <div key={animKey} style={slideStyle}>
             {renderPage()}
           </div>
@@ -133,24 +133,22 @@ export default function App() {
       )}
 
       <style>{`
-  #root { width:100%; min-height:100vh; }
-  @keyframes slideUp {
-    from { opacity:0; transform:translateY(24px); }
-    to   { opacity:1; transform:translateY(0); }
-  }
-  * { -webkit-tap-highlight-color:transparent; box-sizing:border-box; }
-  body { margin:0; padding:0; background:#0A0A0A; width:100%; }
-  input,select,textarea,button { font-family:'Inter',-apple-system,sans-serif; }
-  ::-webkit-scrollbar { width:0px; }
-  button:active { opacity:0.75; transform:scale(0.98); }
-
-  @media print {
-    /* Hide sidebar when printing */
-    .sidebar-nav { display: none !important; }
-    .main-content { margin-left: 0 !important; width: 100% !important; }
-    body { background: white !important; }
-  }
-`}</style>
+        #root { width:100%; min-height:100vh; }
+        @keyframes slideUp {
+          from { opacity:0; transform:translateY(24px); }
+          to   { opacity:1; transform:translateY(0); }
+        }
+        * { -webkit-tap-highlight-color:transparent; box-sizing:border-box; }
+        body { margin:0; padding:0; background:#0A0A0A; width:100%; }
+        input,select,textarea,button { font-family:'Inter',-apple-system,sans-serif; }
+        ::-webkit-scrollbar { width:0px; }
+        button:active { opacity:0.75; transform:scale(0.98); }
+        @media print {
+          .sidebar-nav { display: none !important; }
+          .main-content { margin-left: 0 !important; width: 100% !important; }
+          body { background: white !important; }
+        }
+      `}</style>
     </div>
   );
 }
