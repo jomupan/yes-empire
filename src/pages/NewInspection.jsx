@@ -58,10 +58,22 @@ export default function NewInspection({ nav, setSelId, isLaptop }) {
   const pad = isLaptop ? "0 40px" : "0 16px";
 
   return (
-    <div style={{ background:iosBg, minHeight:"100vh", paddingBottom:40 }}>
+    <div style={{ background:"transparent", minHeight:"100vh", paddingBottom:40 }}>
 
       {/* HEADER */}
-      <div style={{ background:black, padding: isLaptop?"40px 40px 28px":"72px 24px 24px", marginBottom:1 }}>
+      <div style={{ background:"rgba(0,0,0,0.7)", padding: isLaptop?"40px 40px 28px":"72px 24px 24px", marginBottom:1 }}>
+
+        {/* LOGO TICKER */}
+        <div style={{ overflow:"hidden", marginBottom:20, borderTop:`1px solid ${gold}40`, borderBottom:`1px solid ${gold}40`, padding:"8px 0" }}>
+          <div style={{ display:"flex", animation:"ticker 8s linear infinite", width:"max-content", willChange:"transform" }}>
+            {[...Array(20)].map((_,i)=>(
+              <div key={i} style={{ flexShrink:0, width:100, height:28, overflow:"hidden", marginRight:50 }}>
+                <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain" }}/>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <button onClick={()=>nav("dashboard")} style={{ background:"none", border:"none", color:gold, fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit", padding:0, marginBottom:16, letterSpacing:0.5 }}>
           ← Back
         </button>
@@ -70,11 +82,8 @@ export default function NewInspection({ nav, setSelId, isLaptop }) {
       </div>
 
       <div style={{ padding:pad }}>
-
         {isLaptop ? (
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:1, background:"#E5E5EA", marginBottom:16 }}>
-
-            {/* LEFT */}
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:1, background:"rgba(0,0,0,0.2)", marginBottom:16 }}>
             <div style={{ background:white, padding:"28px 24px" }}>
               <div style={{ fontSize:11, fontWeight:700, color:sub, letterSpacing:1.5, textTransform:"uppercase", marginBottom:20 }}>General Information</div>
               <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
@@ -92,8 +101,6 @@ export default function NewInspection({ nav, setSelId, isLaptop }) {
                 </Fld>
               </div>
             </div>
-
-            {/* RIGHT */}
             <div style={{ background:white, padding:"28px 24px" }}>
               <div style={{ fontSize:11, fontWeight:700, color:sub, letterSpacing:1.5, textTransform:"uppercase", marginBottom:20 }}>Location</div>
               <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
@@ -124,7 +131,7 @@ export default function NewInspection({ nav, setSelId, isLaptop }) {
             </div>
           </div>
         ) : (
-          <div style={{ display:"flex", flexDirection:"column", gap:1, background:"#E5E5EA", marginBottom:16 }}>
+          <div style={{ display:"flex", flexDirection:"column", gap:1, background:"rgba(0,0,0,0.2)", marginBottom:16 }}>
             <div style={{ background:white, padding:"20px 16px" }}>
               <div style={{ fontSize:11, fontWeight:700, color:sub, letterSpacing:1.5, textTransform:"uppercase", marginBottom:16 }}>General Information</div>
               <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
@@ -173,8 +180,7 @@ export default function NewInspection({ nav, setSelId, isLaptop }) {
           </div>
         )}
 
-        {/* BUTTONS */}
-        <div style={{ display:"flex", gap:1, background:"#E5E5EA" }}>
+        <div style={{ display:"flex", gap:1, background:"rgba(0,0,0,0.2)" }}>
           <button onClick={()=>nav("dashboard")} style={{ flex:1, padding:"15px", background:white, color:sub, border:"none", fontWeight:600, fontSize:13, cursor:"pointer", fontFamily:"inherit", letterSpacing:0.5 }}>
             Cancel
           </button>
@@ -183,6 +189,13 @@ export default function NewInspection({ nav, setSelId, isLaptop }) {
           </button>
         </div>
       </div>
+
+      <style>{`
+        @keyframes ticker {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+      `}</style>
     </div>
   );
 }

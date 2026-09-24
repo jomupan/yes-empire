@@ -94,8 +94,6 @@ function SignaturePad({ label, sigKey, savedSig, onSave }) {
   return (
     <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
       <div style={{ fontSize:11, color:sub, fontWeight:700, textTransform:"uppercase", letterSpacing:1, marginBottom:4 }}>{label}</div>
-
-      {/* CANVAS */}
       <div style={{ position:"relative" }}>
         <canvas
           ref={canvasRef}
@@ -110,21 +108,18 @@ function SignaturePad({ label, sigKey, savedSig, onSave }) {
             touchAction:"none", display:"block",
           }}
         />
-        {/* LOCK OVERLAY */}
         {!active && (
           <div style={{ position:"absolute", inset:0, display:"flex", alignItems:"center", justifyContent:"center", background:"rgba(250,250,250,0.85)" }}>
             {hasSig ? (
-              <div style={{ fontSize:12, color:"#34C759", fontWeight:700, letterSpacing:0.5 }}>✓ Signature saved</div>
+              <div style={{ fontSize:12, color:"#34C759", fontWeight:700 }}>✓ Signature saved</div>
             ) : (
-              <button onClick={()=>setActive(true)} style={{ padding:"10px 20px", background:gold, color:white, border:"none", fontWeight:700, fontSize:12, cursor:"pointer", fontFamily:"inherit", letterSpacing:0.5 }}>
+              <button onClick={()=>setActive(true)} style={{ padding:"10px 20px", background:gold, color:white, border:"none", fontWeight:700, fontSize:12, cursor:"pointer", fontFamily:"inherit" }}>
                 Tap to Sign
               </button>
             )}
           </div>
         )}
       </div>
-
-      {/* ACTIONS WHEN ACTIVE */}
       {active && (
         <div style={{ display:"flex", gap:8 }}>
           <button onClick={clear} style={{ flex:1, padding:"8px", background:"#FF3B3010", color:"#FF3B30", border:"none", fontWeight:600, fontSize:11, cursor:"pointer", fontFamily:"inherit" }}>Clear</button>
@@ -136,8 +131,6 @@ function SignaturePad({ label, sigKey, savedSig, onSave }) {
           )}
         </div>
       )}
-
-      {/* EDIT/CLEAR WHEN SAVED */}
       {!active && hasSig && (
         <div style={{ display:"flex", gap:8 }}>
           <button onClick={()=>setActive(true)} style={{ flex:1, padding:"8px", background:"#F5F5F5", color:sub, border:"none", fontWeight:600, fontSize:11, cursor:"pointer", fontFamily:"inherit" }}>Edit</button>
@@ -338,10 +331,22 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
     };
 
     return (
-      <div style={{ background:iosBg, minHeight:"100vh", paddingBottom:40 }}>
+      <div style={{ background:"transparent", minHeight:"100vh", paddingBottom:40 }}>
 
         {/* HEADER */}
-        <div style={{ background:"#000", padding: isLaptop?"40px 40px 24px":"72px 24px 20px", marginBottom:1 }}>
+        <div style={{ background:"rgba(0,0,0,0.7)", padding: isLaptop?"40px 40px 24px":"72px 24px 20px", marginBottom:1 }}>
+
+          {/* LOGO TICKER */}
+          <div style={{ overflow:"hidden", marginBottom:20, borderTop:`1px solid ${gold}40`, borderBottom:`1px solid ${gold}40`, padding:"8px 0" }}>
+            <div style={{ display:"flex", animation:"ticker 8s linear infinite", width:"max-content", willChange:"transform" }}>
+              {[...Array(20)].map((_,i)=>(
+                <div key={i} style={{ flexShrink:0, width:100, height:28, overflow:"hidden", marginRight:50 }}>
+                  <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain" }}/>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <button onClick={()=>setReportId(null)} style={{ background:"none", border:"none", color:gold, fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit", padding:0, marginBottom:16, letterSpacing:0.5 }}>
             ← All Reports
           </button>
@@ -360,7 +365,7 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
         <div style={{ padding:pad }}>
 
           {/* COVER INFO */}
-          <div className="cover-section" style={{ background:white, padding:"24px 20px", marginBottom:1 }}>
+          <div style={{ background:white, padding:"24px 20px", marginBottom:1 }}>
             <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", marginBottom:20, paddingBottom:20, borderBottom:"2px solid #000" }}>
               <div style={{ width:120, height:48 }}>
                 <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain" }}/>
@@ -388,7 +393,7 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
           </div>
 
           {/* SUMMARY */}
-          <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:1, background:"#E5E5EA", marginBottom:1 }}>
+          <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:1, background:"rgba(0,0,0,0.2)", marginBottom:1 }}>
             {[
               {l:"Total Defects", v:def.length, c:"#000"},
               {l:"Open",          v:op,         c:red},
@@ -404,7 +409,7 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
 
           {/* FLOOR PLAN */}
           {ri.floorPlan&&(
-            <div className="floorplan-section" style={{ background:white, padding:"20px", marginBottom:1 }}>
+            <div style={{ background:white, padding:"20px", marginBottom:1 }}>
               <div style={{ fontSize:11, fontWeight:700, color:sub, letterSpacing:1.5, textTransform:"uppercase", marginBottom:6 }}>Floor Plan</div>
               <div style={{ fontSize:12, color:sub, marginBottom:12 }}>Property layout overview</div>
               <div style={{ border:"1px solid #E5E5EA", overflow:"hidden" }}>
@@ -423,13 +428,13 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
             ) : (
               <div>
                 {defGroups.map((group, pageIdx) => (
-                  <div key={pageIdx} className="defect-page" style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:1, background:"#E5E5EA", marginBottom:1 }}>
+                  <div key={pageIdx} style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:1, background:"rgba(0,0,0,0.2)", marginBottom:1 }}>
                     {group.map((d) => {
                       const photos  = getDefectPhotos(d);
                       const defNum  = def.indexOf(d) + 1;
                       const marker  = markers[defNum - 1];
                       return (
-                        <div key={d.id} className="defect-card" style={{ background:white }}>
+                        <div key={d.id} style={{ background:white }}>
                           <div style={{ padding:"8px 14px", background:"#F5F5F5", borderLeft:`4px solid ${SEV[d.severity]?.bar||gold}` }}>
                             <div style={{ fontWeight:800, fontSize:12, color:txt, letterSpacing:0.5 }}>DEFECT {defNum}</div>
                           </div>
@@ -483,24 +488,43 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
           <SignatureSection reportId={ri.id} inspections={inspections}/>
 
         </div>
+
+        <style>{`
+          @keyframes ticker {
+            0%   { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+        `}</style>
       </div>
     );
   }
 
   // REPORTS LIST
   return (
-    <div style={{ background:iosBg, minHeight:"100vh", paddingBottom:40 }}>
-      <div style={{ background:"#000", padding: isLaptop?"40px 40px 28px":"72px 24px 24px", marginBottom:1 }}>
+    <div style={{ background:"transparent", minHeight:"100vh", paddingBottom:40 }}>
+      <div style={{ background:"rgba(0,0,0,0.7)", padding: isLaptop?"40px 40px 28px":"72px 24px 24px", marginBottom:1 }}>
+
+        {/* LOGO TICKER */}
+        <div style={{ overflow:"hidden", marginBottom:20, borderTop:`1px solid ${gold}40`, borderBottom:`1px solid ${gold}40`, padding:"8px 0" }}>
+          <div style={{ display:"flex", animation:"ticker 8s linear infinite", width:"max-content", willChange:"transform" }}>
+            {[...Array(20)].map((_,i)=>(
+              <div key={i} style={{ flexShrink:0, width:100, height:28, overflow:"hidden", marginRight:50 }}>
+                <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain" }}/>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <div style={{ fontWeight:800, fontSize: isLaptop?32:26, color:white, letterSpacing:-0.8, marginBottom:4 }}>Reports</div>
         <div style={{ fontSize:13, color:"rgba(255,255,255,0.4)", letterSpacing:0.3 }}>View and print inspection reports</div>
       </div>
       <div style={{ padding:pad }}>
         {loading?(
-          <div style={{ textAlign:"center", padding:40, color:sub }}>Loading...</div>
+          <div style={{ textAlign:"center", padding:40, color:"rgba(255,255,255,0.4)" }}>Loading...</div>
         ):inspections.length===0?(
           <EmptyState icon="📄" title="No reports yet" desc="Complete an inspection to generate a report"/>
         ):(
-          <div style={{ display:"grid", gridTemplateColumns: isLaptop?"repeat(3,1fr)":"1fr", gap:1, background:"#E5E5EA" }}>
+          <div style={{ display:"grid", gridTemplateColumns: isLaptop?"repeat(3,1fr)":"1fr", gap:1, background:"rgba(0,0,0,0.2)" }}>
             {inspections.map(i=>(
               <div key={i.id} style={{ background:white, padding:"18px 20px" }}>
                 <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12, marginBottom:14 }}>
@@ -522,6 +546,13 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
           </div>
         )}
       </div>
+
+      <style>{`
+        @keyframes ticker {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+      `}</style>
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { gold, txt, sub, iosBg, iosSep, white, black } from "../config";
+import { gold, txt, sub, white, black } from "../config";
 import Card from "../components/Card";
 import Pill from "../components/Pill";
 import EmptyState from "../components/EmptyState";
@@ -18,18 +18,37 @@ export default function AllInspections({ inspections, loading, nav, goDetail, is
   const pad = isLaptop ? "0 40px" : "0 16px";
 
   return (
-    <div style={{ background:iosBg, minHeight:"100vh", paddingBottom:40 }}>
+    <div style={{ background:"transparent", minHeight:"100vh", paddingBottom:40 }}>
 
       {/* HEADER */}
-      <div style={{ background:black, padding: isLaptop?"40px 40px 28px":"72px 24px 24px", marginBottom:1 }}>
-        <div style={{ fontWeight:800, fontSize: isLaptop?32:26, color:white, letterSpacing:-0.8, marginBottom:4 }}>All Inspections</div>
-        <div style={{ fontSize:13, color:"rgba(255,255,255,0.4)", letterSpacing:0.5 }}>{filtered.length} of {inspections.length} records</div>
+      <div style={{ background:"rgba(0,0,0,0.7)", padding: isLaptop?"40px 40px 28px":"72px 24px 24px", marginBottom:1 }}>
+
+        {/* LOGO TICKER */}
+        <div style={{ overflow:"hidden", marginBottom:20, borderTop:`1px solid ${gold}40`, borderBottom:`1px solid ${gold}40`, padding:"8px 0" }}>
+          <div style={{ display:"flex", animation:"ticker 8s linear infinite", width:"max-content", willChange:"transform" }}>
+            {[...Array(20)].map((_,i)=>(
+              <div key={i} style={{ flexShrink:0, width:100, height:28, overflow:"hidden", marginRight:50 }}>
+                <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain" }}/>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-end" }}>
+          <div>
+            <div style={{ fontWeight:800, fontSize: isLaptop?32:26, color:white, letterSpacing:-0.8, marginBottom:4 }}>All Inspections</div>
+            <div style={{ fontSize:13, color:"rgba(255,255,255,0.4)", letterSpacing:0.5 }}>{filtered.length} of {inspections.length} records</div>
+          </div>
+          <button onClick={()=>nav("new")} style={{ padding:"11px 24px", background:gold, color:white, border:"none", fontWeight:700, fontSize:11, cursor:"pointer", fontFamily:"inherit", letterSpacing:1.5, textTransform:"uppercase" }}>
+            + New
+          </button>
+        </div>
       </div>
 
       {/* SEARCH + FILTER */}
-      <div style={{ background:white, borderBottom:`1px solid #E5E5EA`, padding: isLaptop?"16px 40px":"12px 16px" }}>
+      <div style={{ background:"rgba(255,255,255,0.88)", borderBottom:"1px solid #E5E5EA", padding: isLaptop?"16px 40px":"12px 16px" }}>
         <div style={{ display:"flex", gap:10, flexWrap:"wrap", alignItems:"center" }}>
-          <div style={{ flex:1, minWidth:200, position:"relative" }}>
+          <div style={{ flex:1, minWidth:200 }}>
             <input
               value={search}
               onChange={e=>setSearch(e.target.value)}
@@ -39,8 +58,8 @@ export default function AllInspections({ inspections, loading, nav, goDetail, is
                 border:"1.5px solid #E5E5EA",
                 borderRadius:0, fontSize:13,
                 fontFamily:"inherit", outline:"none",
-                background:iosBg, color:txt,
-                boxSizing:"border-box", letterSpacing:0.2,
+                background:"white", color:txt,
+                boxSizing:"border-box",
               }}
             />
           </div>
@@ -53,29 +72,16 @@ export default function AllInspections({ inspections, loading, nav, goDetail, is
                 letterSpacing:1, textTransform:"uppercase",
                 border:"none", borderBottom:`2px solid ${stFilter===s?gold:"transparent"}`,
                 background:"none", color: stFilter===s ? gold : sub,
-                transition:"all 0.15s ease",
               }}>{s}</button>
             ))}
           </div>
         </div>
       </div>
 
-      {/* NEW BUTTON */}
-      <div style={{ padding: isLaptop?"16px 40px":"12px 16px", background:white, borderBottom:"1px solid #E5E5EA" }}>
-        <button onClick={()=>nav("new")} style={{
-          padding:"11px 24px", background:black,
-          color:white, border:"none", borderRadius:0,
-          fontWeight:700, fontSize:11, cursor:"pointer",
-          fontFamily:"inherit", letterSpacing:1.5, textTransform:"uppercase",
-        }}>
-          + New Inspection
-        </button>
-      </div>
-
       {/* LIST */}
       <div style={{ padding:pad, paddingTop:16 }}>
         {loading ? (
-          <div style={{ textAlign:"center", padding:40, color:sub }}>Loading...</div>
+          <div style={{ textAlign:"center", padding:40, color:"rgba(255,255,255,0.4)" }}>Loading...</div>
         ) : filtered.length===0 ? (
           <EmptyState
             icon={search?"🔍":"📋"}
@@ -85,7 +91,7 @@ export default function AllInspections({ inspections, loading, nav, goDetail, is
             actionLabel="Start Now"
           />
         ) : (
-          <div style={{ display:"grid", gridTemplateColumns: isLaptop?"repeat(3,1fr)":"1fr", gap:1, background:"#E5E5EA" }}>
+          <div style={{ display:"grid", gridTemplateColumns: isLaptop?"repeat(3,1fr)":"1fr", gap:1, background:"rgba(0,0,0,0.2)" }}>
             {filtered.map(i=>{
               const defs=i.defects||[];
               const pct=defs.length>0?Math.round((defs.filter(d=>d.status==="Resolved").length/defs.length)*100):0;
@@ -94,11 +100,11 @@ export default function AllInspections({ inspections, loading, nav, goDetail, is
                   <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:12, marginBottom:defs.length>0?12:0 }}>
                     <div style={{ flex:1, minWidth:0 }}>
                       <div style={{ fontWeight:700, fontSize:14, color:txt, marginBottom:6, overflow:"hidden", textOverflow:"ellipsis", whiteSpace:"nowrap" }}>{i.title}</div>
-                      <div style={{ display:"flex", flexDirection:"column", gap:4 }}>
-  <div style={{ fontSize:12, color:sub }}>{i.client}</div>
-  <div style={{ fontSize:12, color:sub }}>{i.propertyType} · {i.city}, {i.state}</div>
-  <div style={{ fontSize:11, color:sub, opacity:0.7, letterSpacing:0.3 }}>{i.date}</div>
-</div>
+                      <div style={{ display:"flex", flexDirection:"column", gap:3 }}>
+                        <div style={{ fontSize:12, color:sub }}>{i.client}</div>
+                        <div style={{ fontSize:12, color:sub }}>{i.propertyType} · {i.city}, {i.state}</div>
+                        <div style={{ fontSize:11, color:sub, opacity:0.7 }}>{i.date}</div>
+                      </div>
                     </div>
                     <Pill type="insp" value={i.status}/>
                   </div>
@@ -119,6 +125,13 @@ export default function AllInspections({ inspections, loading, nav, goDetail, is
           </div>
         )}
       </div>
+
+      <style>{`
+        @keyframes ticker {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+      `}</style>
     </div>
   );
 }

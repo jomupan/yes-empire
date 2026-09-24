@@ -24,15 +24,27 @@ export default function Dashboard({ inspections, loading, nav, goDetail, user, i
   const today    = new Date().toLocaleDateString("en-MY",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
 
   return (
-    <div style={{ background:iosBg, minHeight:"100vh", paddingBottom:40 }}>
+    <div style={{ background:"transparent", minHeight:"100vh", paddingBottom:40 }}>
 
       {/* HERO */}
-      <div style={{ background:black, padding: isLaptop?"40px 40px 32px":"72px 24px 32px", marginBottom:1 }}>
-        <div style={{ marginBottom:20 }}>
-          <div style={{ width:200, height:80, overflow:"hidden", display:"flex", alignItems:"center" }}>
-           <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", objectFit:"contain", animation:"slideLeftRight 3s ease-in-out infinite" }}/>
+      <div style={{ background:"rgba(0,0,0,0.7)", padding: isLaptop?"40px 40px 32px":"72px 24px 32px", marginBottom:1 }}>
+
+        {/* LOGO TICKER */}
+        <div style={{ overflow:"hidden", marginBottom:20, borderTop:`1px solid ${gold}40`, borderBottom:`1px solid ${gold}40`, padding:"8px 0" }}>
+          <div style={{
+            display:"flex",
+            animation:"ticker 8s linear infinite",
+            width:"max-content",
+            willChange:"transform",
+          }}>
+            {[...Array(20)].map((_,i)=>(
+              <div key={i} style={{ flexShrink:0, width:120, height:32, overflow:"hidden", marginRight:60 }}>
+                <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain" }}/>
+              </div>
+            ))}
           </div>
-          </div>
+        </div>
+
         <div style={{ fontSize:11, color:gold, fontWeight:700, letterSpacing:2, textTransform:"uppercase", marginBottom:12 }}>{today}</div>
         <div style={{ color:white, fontWeight:800, fontSize: isLaptop?36:28, letterSpacing:-0.8, lineHeight:1.1, marginBottom:4 }}>
           Hello, {user?.name?.split(" ")[0]}
@@ -53,7 +65,7 @@ export default function Dashboard({ inspections, loading, nav, goDetail, user, i
       </div>
 
       {/* STAT CARDS */}
-      <div style={{ display:"grid", gridTemplateColumns: isLaptop?"repeat(4,1fr)":"1fr 1fr", gap:1, background:"#E5E5EA", marginBottom:1 }}>
+      <div style={{ display:"grid", gridTemplateColumns: isLaptop?"repeat(4,1fr)":"1fr 1fr", gap:1, background:"rgba(0,0,0,0.2)", marginBottom:1 }}>
         <StatCard label="Inspections"   value={inspections.length} accent={gold}    />
         <StatCard label="Completed"     value={done}               accent="#30D158" />
         <StatCard label="Total Defects" value={totalDef}           accent="#AF52DE" />
@@ -63,16 +75,16 @@ export default function Dashboard({ inspections, loading, nav, goDetail, user, i
       {/* RECENT */}
       <div style={{ padding: isLaptop?"24px 40px 0":"16px 16px 0" }}>
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:16 }}>
-          <div style={{ fontWeight:700, fontSize:13, color:sub, letterSpacing:1.5, textTransform:"uppercase" }}>Recent Inspections</div>
+          <div style={{ fontWeight:700, fontSize:13, color:"rgba(255,255,255,0.7)", letterSpacing:1.5, textTransform:"uppercase" }}>Recent Inspections</div>
           <button onClick={()=>nav("list")} style={{ background:"none", border:"none", color:gold, fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit", letterSpacing:0.5 }}>See All</button>
         </div>
 
         {loading ? (
-          <div style={{ textAlign:"center", padding:40, color:sub }}>Loading...</div>
+          <div style={{ textAlign:"center", padding:40, color:"rgba(255,255,255,0.4)" }}>Loading...</div>
         ) : inspections.length===0 ? (
           <EmptyState icon="🏠" title="No inspections yet" desc="Start your first property inspection" onAction={()=>nav("new")} actionLabel="Start Now"/>
         ) : (
-          <div style={{ display:"grid", gridTemplateColumns: isLaptop?"repeat(3,1fr)":"1fr", gap:1, background:"#E5E5EA" }}>
+          <div style={{ display:"grid", gridTemplateColumns: isLaptop?"repeat(3,1fr)":"1fr", gap:1, background:"rgba(0,0,0,0.2)" }}>
             {inspections.slice(0, isLaptop?6:3).map(i=>{
               const defs=i.defects||[];
               const pct=defs.length>0?Math.round((defs.filter(d=>d.status==="Resolved").length/defs.length)*100):0;
@@ -92,7 +104,7 @@ export default function Dashboard({ inspections, loading, nav, goDetail, user, i
                         <div style={{ fontSize:11, color:sub, letterSpacing:0.5 }}>{defs.length} DEFECT{defs.length!==1?"S":""}</div>
                         <div style={{ fontSize:11, color:txt, fontWeight:700 }}>{pct}%</div>
                       </div>
-                      <div style={{ height:3, background:"#E5E5EA", overflow:"hidden" }}>
+                      <div style={{ height:3, background:"rgba(255,255,255,0.1)", overflow:"hidden" }}>
                         <div style={{ height:"100%", width:`${pct}%`, background:gold, transition:"width 0.4s" }}/>
                       </div>
                     </div>
@@ -118,6 +130,10 @@ export default function Dashboard({ inspections, loading, nav, goDetail, user, i
           0%   { transform: translateX(-6px); }
           50%  { transform: translateX(6px);  }
           100% { transform: translateX(-6px); }
+        }
+        @keyframes ticker {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
       `}</style>
     </div>
