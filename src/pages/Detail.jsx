@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { db } from "../firebase";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
 import Pill from "../components/Pill";
@@ -19,6 +19,8 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
   const [showFP,       setShowFP]       = useState(false);
   const [showFPPicker, setShowFPPicker] = useState(false);
   const [lightbox,     setLightbox]     = useState(null);
+  const [showQR,       setShowQR]       = useState(false);
+  const qrRef = useRef(null);
 
   const sel = inspections.find(i => i.id === selId);
 
@@ -28,6 +30,19 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
       setMarkers(sel.floorPlanMarkers || []);
     }
   }, [selId]);
+
+  useEffect(() => {
+    if (showQR && qrRef.current) {
+      qrRef.current.innerHTML = "";
+      new window.QRCode(qrRef.current, {
+        text: `${window.location.origin}/?inspection=${selId}`,
+        width: 200,
+        height: 200,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+      });
+    }
+  }, [showQR, selId]);
 
   if (!sel) return null;
 
@@ -169,10 +184,22 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
   const pad = isLaptop ? "0 40px" : "0 16px";
 
   return (
-    <div style={{ background:iosBg, minHeight:"100vh", paddingBottom:40 }}>
+    <div style={{ background:"transparent", minHeight:"100vh", paddingBottom:40 }}>
 
       {/* HEADER */}
-      <div style={{ background:black, padding: isLaptop?"40px 40px 28px":"72px 24px 24px", marginBottom:1 }}>
+      <div style={{ background:"rgba(0,0,0,0.7)", padding: isLaptop?"40px 40px 28px":"72px 24px 24px", marginBottom:1 }}>
+
+        {/* LOGO TICKER */}
+        <div style={{ overflow:"hidden", marginBottom:20, borderTop:`1px solid ${gold}40`, borderBottom:`1px solid ${gold}40`, padding:"8px 0" }}>
+          <div style={{ display:"flex", animation:"ticker 8s linear infinite", width:"max-content", willChange:"transform" }}>
+            {[...Array(20)].map((_,i)=>(
+              <div key={i} style={{ flexShrink:0, width:100, height:28, overflow:"hidden", marginRight:50 }}>
+                <img src="/BENAMORA.jpeg" alt="Benamora" style={{ width:"100%", height:"100%", objectFit:"contain" }}/>
+              </div>
+            ))}
+          </div>
+        </div>
+
         <button onClick={()=>nav("list")} style={{ background:"none", border:"none", color:gold, fontSize:13, fontWeight:600, cursor:"pointer", fontFamily:"inherit", padding:0, marginBottom:16, letterSpacing:0.5 }}>
           ← All Inspections
         </button>
@@ -202,7 +229,7 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
 
         {/* INFO */}
         {isLaptop ? (
-          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:1, background:"#E5E5EA", marginBottom:16 }}>
+          <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:1, background:"rgba(0,0,0,0.2)", marginBottom:16 }}>
             <div style={{ background:white, padding:"24px" }}>
               <div style={{ fontSize:11, fontWeight:700, color:sub, letterSpacing:1.5, textTransform:"uppercase", marginBottom:16 }}>Details</div>
               <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>
@@ -222,6 +249,9 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
               <div style={{ fontSize:11, fontWeight:700, color:sub, letterSpacing:1.5, textTransform:"uppercase", marginBottom:6 }}>Actions</div>
               <button onClick={()=>{setReportId(sel.id);nav("reports");}} style={{ padding:"13px 16px", background:iosBg, color:txt, border:"1px solid #E5E5EA", fontWeight:600, fontSize:13, cursor:"pointer", fontFamily:"inherit", textAlign:"left" }}>
                 View Report
+              </button>
+              <button onClick={()=>setShowQR(true)} style={{ padding:"13px 16px", background:iosBg, color:txt, border:"1px solid #E5E5EA", fontWeight:600, fontSize:13, cursor:"pointer", fontFamily:"inherit", textAlign:"left" }}>
+                QR Code
               </button>
               {unresolved===0&&defs.length>0&&sel.status!=="Completed"&&(
                 <button onClick={markDone} style={{ padding:"13px 16px", background:black, color:white, border:"none", fontWeight:600, fontSize:13, cursor:"pointer", fontFamily:"inherit", textAlign:"left" }}>
@@ -247,13 +277,16 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
                 <div style={{ fontSize:13, color:txt }}>{sel.address}, {sel.postcode}</div>
               </div>
             </div>
-            <div style={{ display:"flex", gap:1, marginBottom:16, background:"#E5E5EA" }}>
+            <div style={{ display:"flex", gap:1, marginBottom:16, background:"rgba(0,0,0,0.2)" }}>
               <button onClick={()=>{setReportId(sel.id);nav("reports");}} style={{ flex:1, padding:"13px", background:white, color:txt, border:"none", fontWeight:600, fontSize:12, cursor:"pointer", fontFamily:"inherit" }}>
                 View Report
               </button>
+              <button onClick={()=>setShowQR(true)} style={{ flex:1, padding:"13px", background:white, color:txt, border:"none", fontWeight:600, fontSize:12, cursor:"pointer", fontFamily:"inherit", borderLeft:"1px solid #E5E5EA" }}>
+                QR Code
+              </button>
               {unresolved===0&&defs.length>0&&sel.status!=="Completed"&&(
-                <button onClick={markDone} style={{ flex:1, padding:"13px", background:black, color:white, border:"none", fontWeight:600, fontSize:12, cursor:"pointer", fontFamily:"inherit" }}>
-                  Mark Complete
+                <button onClick={markDone} style={{ flex:1, padding:"13px", background:black, color:white, border:"none", fontWeight:600, fontSize:12, cursor:"pointer", fontFamily:"inherit", borderLeft:"1px solid #E5E5EA" }}>
+                  Complete
                 </button>
               )}
             </div>
@@ -379,7 +412,7 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
 
         {/* DEFECTS HEADER */}
         <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:1 }}>
-          <div style={{ fontWeight:700, fontSize:13, color:sub, letterSpacing:1.5, textTransform:"uppercase", padding:"0 0 8px" }}>
+          <div style={{ fontWeight:700, fontSize:13, color:"rgba(255,255,255,0.7)", letterSpacing:1.5, textTransform:"uppercase", padding:"0 0 8px" }}>
             Defects ({defs.length})
           </div>
           <button onClick={()=>setShowDF(true)} style={{ padding:"10px 18px", background:gold, color:white, border:"none", fontWeight:700, fontSize:11, cursor:"pointer", fontFamily:"inherit", letterSpacing:1, textTransform:"uppercase" }}>
@@ -391,12 +424,11 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
         {defs.length===0 ? (
           <EmptyState icon="🔍" title="No defects yet" desc="Tap Add Defect to start recording"/>
         ) : (
-          <div style={{ display:"grid", gridTemplateColumns: isLaptop?"repeat(2,1fr)":"1fr", gap:1, background:"#E5E5EA" }}>
+          <div style={{ display:"grid", gridTemplateColumns: isLaptop?"repeat(2,1fr)":"1fr", gap:1, background:"rgba(0,0,0,0.2)" }}>
             {defs.map(d=>{
               const defPhotos=getDefectPhotos(d);
               return(
                 <div key={d.id} style={{ background:white, borderLeft:`4px solid ${SEV[d.severity]?.bar||"#ccc"}` }}>
-                  {/* PHOTOS */}
                   {defPhotos.length>0&&(
                     <div style={{ display:"grid", gridTemplateColumns:defPhotos.length===1?"1fr":"1fr 1fr", gap:1 }}>
                       {defPhotos.map((p,idx)=>(
@@ -444,6 +476,38 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
           </div>
         )}
       </div>
+
+      {/* QR CODE MODAL */}
+      {showQR&&(
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.7)", zIndex:400, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }} onClick={()=>setShowQR(false)}>
+          <div style={{ background:white, padding:32, textAlign:"center", maxWidth:320, width:"100%" }} onClick={e=>e.stopPropagation()}>
+            <div style={{ fontWeight:800, fontSize:18, color:"#000", marginBottom:4 }}>QR Code</div>
+            <div style={{ fontSize:12, color:sub, marginBottom:20 }}>{sel.title}</div>
+            <div style={{ display:"flex", justifyContent:"center", marginBottom:20 }}>
+              <div ref={qrRef}/>
+            </div>
+            <div style={{ fontSize:11, color:sub, marginBottom:20, lineHeight:1.6 }}>
+              Scan to open this inspection on any device
+            </div>
+            <div style={{ display:"flex", gap:10 }}>
+              <button onClick={()=>setShowQR(false)} style={{ flex:1, padding:"13px", background:iosBg, color:sub, border:"none", fontWeight:600, fontSize:13, cursor:"pointer", fontFamily:"inherit" }}>
+                Close
+              </button>
+              <button onClick={()=>{
+                const canvas = qrRef.current?.querySelector("canvas");
+                if (canvas) {
+                  const link = document.createElement("a");
+                  link.download = `QR-${sel.title}.png`;
+                  link.href = canvas.toDataURL();
+                  link.click();
+                }
+              }} style={{ flex:1, padding:"13px", background:black, color:white, border:"none", fontWeight:700, fontSize:13, cursor:"pointer", fontFamily:"inherit" }}>
+                Download
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* PHOTO LIGHTBOX */}
       {lightbox&&(
@@ -579,6 +643,13 @@ export default function Detail({ inspections, selId, nav, setReportId, isLaptop 
           </div>
         </div>
       )}
+
+      <style>{`
+        @keyframes ticker {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+      `}</style>
     </div>
   );
 }
