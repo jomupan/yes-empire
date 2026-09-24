@@ -2,11 +2,11 @@
 export const gold       = "#F07C1E";
 export const goldLight  = "#F5A623";
 export const goldBg     = "#FFF5EB";
-export const black      = "#000000";
-export const blackSoft  = "#1C1C1E";
-export const white      = "#FFFFFF";
-export const iosBg      = "#F2F2F7";
-export const iosCard    = "#FFFFFF";
+export const black      = "rgba(0,0,0,0.82)";
+export const blackSoft  = "rgba(28,28,30,0.82)";
+export const iosBg      = "rgba(240,242,247,0.15)";
+export const iosCard    = "rgba(255,255,255,0.88)";
+export const white      = "rgba(255,255,255,0.88)";
 export const iosGray    = "#8E8E93";
 export const iosGray2   = "#AEAEB2";
 export const iosGray3   = "#C7C7CC";
