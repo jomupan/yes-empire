@@ -130,20 +130,20 @@ export default function App() {
     <div style={{ minHeight:"100vh", fontFamily:"'Inter',-apple-system,sans-serif", width:"100%", overflowX:"hidden", position:"relative" }}>
 
       {/* BLURRED BACKGROUND */}
-      <div style={{
-        position:"fixed", inset:0, zIndex:0,
-        backgroundImage:"url('/house_bg.jpeg')",
-        backgroundSize:"cover",
-        backgroundPosition:"center",
-        filter:"blur(12px)",
-        transform:"scale(1.1)",
-      }}/>
+<div style={{
+  position:"fixed", inset:0, zIndex:0,
+  backgroundImage:"url('/house_bg.jpeg')",
+  backgroundSize:"cover",
+  backgroundPosition:"center",
+  filter:"blur(6px)",
+  transform:"scale(1.05)",
+}}/>
 
-      {/* DARK OVERLAY */}
-      <div style={{
-        position:"fixed", inset:0, zIndex:0,
-        background:"rgba(0,0,0,0.55)",
-      }}/>
+{/* DARK OVERLAY */}
+<div style={{
+  position:"fixed", inset:0, zIndex:0,
+  background:"rgba(0,0,0,0.4)",
+}}/>
 
       {/* CONTENT */}
       <div style={{ position:"relative", zIndex:1 }}>
