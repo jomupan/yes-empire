@@ -45,6 +45,18 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+  if (!user) return;
+  const params = new URLSearchParams(window.location.search);
+  const inspectionId = params.get("inspection");
+  if (inspectionId) {
+    setSelId(inspectionId);
+    setPage("detail");
+    // Clean up URL
+    window.history.replaceState({}, "", "/");
+  }
+}, [user]);
+
+  useEffect(() => {
     if (!user) return;
     const unsub = onSnapshot(collection(db, "inspections"), snap => {
       const data = snap.docs.map(d => ({ id:d.id, ...d.data() }));
