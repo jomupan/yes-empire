@@ -54,27 +54,11 @@ export default function App() {
     return () => unsub();
   }, [user]);
 
-  useEffect(() => {
-    const handlePopState = () => {
-      setHistory(h => {
-        if (h.length === 0) return h;
-        const prev = h[h.length - 1];
-        setPage(prev);
-        setAnimKey(k => k + 1);
-        setMenuOpen(false);
-        return h.slice(0, -1);
-      });
-    };
-    window.addEventListener("popstate", handlePopState);
-    return () => window.removeEventListener("popstate", handlePopState);
-  }, []);
-
   const nav = (p) => {
     setHistory(h => [...h, page]);
     setPage(p);
     setAnimKey(k => k + 1);
     setMenuOpen(false);
-    window.history.pushState({ page: p }, "");
   };
 
   const goDetail = (id) => {
@@ -111,8 +95,22 @@ export default function App() {
 
   // Login screen
   if (!user) return (
-    <div style={{ fontFamily:"'Inter',-apple-system,sans-serif", width:"100%", minHeight:"100vh" }}>
-      <Login onValidate={validatePin} onComplete={completeLogin}/>
+    <div style={{ fontFamily:"'Inter',-apple-system,sans-serif", width:"100%", minHeight:"100vh", position:"relative" }}>
+      {/* BLURRED BACKGROUND */}
+      <div style={{
+        position:"fixed", inset:0, zIndex:0,
+        backgroundImage:"url('/house_bg.jpeg')",
+        backgroundSize:"cover",
+        backgroundPosition:"center",
+        filter:"blur(12px)",
+        transform:"scale(1.1)",
+      }}/>
+      {/* DARK OVERLAY */}
+      <div style={{ position:"fixed", inset:0, zIndex:0, background:"rgba(0,0,0,0.65)" }}/>
+      {/* LOGIN CONTENT */}
+      <div style={{ position:"relative", zIndex:1 }}>
+        <Login onValidate={validatePin} onComplete={completeLogin}/>
+      </div>
     </div>
   );
 
@@ -129,26 +127,46 @@ export default function App() {
   };
 
   return (
-    <div style={{ minHeight:"100vh", background:"#F2F2F7", fontFamily:"'Inter',-apple-system,sans-serif", width:"100%", overflowX:"hidden" }}>
-      {isLaptop ? (
-        <div style={{ display:"flex", minHeight:"100vh", width:"100%" }}>
-          <div className="sidebar-nav" style={{ width:SIDEBAR_W, flexShrink:0, position:"fixed", top:0, left:0, bottom:0, zIndex:100 }}>
-            <BottomNav page={page} nav={nav} user={user} logout={logout} open={true} setOpen={()=>{}} isLaptop={true}/>
-          </div>
-          <div className="main-content" style={{ marginLeft:SIDEBAR_W, flex:1, minHeight:"100vh", minWidth:0, overflow:"hidden" }}>
-            <div key={animKey} style={{ ...slideStyle, width:"100%", minHeight:"100vh" }}>
-              {renderPage()}
+    <div style={{ minHeight:"100vh", fontFamily:"'Inter',-apple-system,sans-serif", width:"100%", overflowX:"hidden", position:"relative" }}>
+
+      {/* BLURRED BACKGROUND */}
+      <div style={{
+        position:"fixed", inset:0, zIndex:0,
+        backgroundImage:"url('/house_bg.jpeg')",
+        backgroundSize:"cover",
+        backgroundPosition:"center",
+        filter:"blur(12px)",
+        transform:"scale(1.1)",
+      }}/>
+
+      {/* DARK OVERLAY */}
+      <div style={{
+        position:"fixed", inset:0, zIndex:0,
+        background:"rgba(0,0,0,0.55)",
+      }}/>
+
+      {/* CONTENT */}
+      <div style={{ position:"relative", zIndex:1 }}>
+        {isLaptop ? (
+          <div style={{ display:"flex", minHeight:"100vh", width:"100%" }}>
+            <div className="sidebar-nav" style={{ width:SIDEBAR_W, flexShrink:0, position:"fixed", top:0, left:0, bottom:0, zIndex:100 }}>
+              <BottomNav page={page} nav={nav} user={user} logout={logout} open={true} setOpen={()=>{}} isLaptop={true}/>
+            </div>
+            <div className="main-content" style={{ marginLeft:SIDEBAR_W, flex:1, minHeight:"100vh", minWidth:0, overflow:"hidden" }}>
+              <div key={animKey} style={{ ...slideStyle, width:"100%", minHeight:"100vh" }}>
+                {renderPage()}
+              </div>
             </div>
           </div>
-        </div>
-      ) : (
-        <div style={{ width:"100%", position:"relative" }}>
-          <div key={animKey} style={slideStyle}>
-            {renderPage()}
+        ) : (
+          <div style={{ width:"100%", position:"relative" }}>
+            <div key={animKey} style={slideStyle}>
+              {renderPage()}
+            </div>
+            <BottomNav page={page} nav={nav} user={user} logout={logout} open={menuOpen} setOpen={setMenuOpen} isLaptop={false}/>
           </div>
-          <BottomNav page={page} nav={nav} user={user} logout={logout} open={menuOpen} setOpen={setMenuOpen} isLaptop={false}/>
-        </div>
-      )}
+        )}
+      </div>
 
       <style>{`
         #root { width:100%; min-height:100vh; }
@@ -157,7 +175,7 @@ export default function App() {
           to   { opacity:1; transform:translateY(0); }
         }
         * { -webkit-tap-highlight-color:transparent; box-sizing:border-box; }
-        body { margin:0; padding:0; background:#0A0A0A; width:100%; }
+        body { margin:0; padding:0; background:#000; width:100%; }
         input,select,textarea,button { font-family:'Inter',-apple-system,sans-serif; }
         ::-webkit-scrollbar { width:0px; }
         button:active { opacity:0.75; transform:scale(0.98); }
