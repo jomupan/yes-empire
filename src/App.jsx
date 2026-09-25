@@ -11,6 +11,8 @@ import Reports from "./pages/Reports";
 import Login from "./pages/Login";
 import Profile from "./pages/Profile";
 import Staff from "./pages/Staff";
+import About from "./pages/About";
+import Analytics from "./pages/Analytics";
 import useAuth from "./hooks/useAuth";
 
 import { gold, black } from "./config";
@@ -136,6 +138,8 @@ export default function App() {
       case "reports":   return <Reports inspections={inspections} loading={loading} reportId={reportId} setReportId={setReportId} nav={nav} isLaptop={isLaptop}/>;
       case "profile":   return <Profile user={user} nav={nav} onUpdateUser={handleUpdateUser} isLaptop={isLaptop}/>;
       case "staff":     return <Staff user={user} nav={nav} isLaptop={isLaptop}/>;
+      case "about":     return <About nav={nav} isLaptop={isLaptop}/>;
+      case "analytics": return <Analytics inspections={inspections} nav={nav} isLaptop={isLaptop}/>;
       default:          return <Dashboard inspections={inspections} loading={loading} nav={nav} goDetail={goDetail} user={user} logout={logout} isLaptop={isLaptop}/>;
     }
   };

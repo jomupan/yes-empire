@@ -1,12 +1,15 @@
 import { black, gold, white, txt, sub, iosBg, iosSep } from "../config";
 
 const NAV = [
-  { label:"Dashboard",      key:"dashboard" },
-  { label:"New Inspection",  key:"new"      },
-  { label:"All Inspections", key:"list"     },
-  { label:"Reports",         key:"reports"  },
-  { label:"Staff",           key:"staff"    },
+  { label:"Dashboard",      key:"dashboard"  },
+  { label:"New Inspection",  key:"new"       },
+  { label:"All Inspections", key:"list"      },
+  { label:"Reports",         key:"reports"   },
+  { label:"Analytics",       key:"analytics" },
+  { label:"Staff",           key:"staff"     },
+  { label:"About",           key:"about"     },
 ];
+
 export default function BottomNav({ page, nav, user, logout, open, setOpen, isLaptop }) {
 
   const SidebarContent = () => (
