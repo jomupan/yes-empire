@@ -1,4 +1,5 @@
 import { useState } from "react";
+import * as XLSX from "xlsx";
 import { gold, txt, sub, white, black } from "../config";
 import Card from "../components/Card";
 import Pill from "../components/Pill";
@@ -18,61 +19,54 @@ export default function AllInspections({ inspections, loading, nav, goDetail, is
   const pad = isLaptop ? "0 40px" : "0 16px";
 
   const exportToExcel = () => {
-  // Sheet 1 — Inspections Summary
-  const inspectionRows = inspections.map((i, idx) => {
-    const defs = i.defects || [];
-    const resolved = defs.filter(d => d.status === "Resolved").length;
-    const rate = defs.length > 0 ? Math.round((resolved / defs.length) * 100) : 0;
-    return {
-      "No":               idx + 1,
-      "Title":            i.title || "-",
-      "Client":           i.client || "-",
-      "Inspector":        i.inspector || "-",
-      "Date":             i.date || "-",
-      "Property Type":    i.propertyType || "-",
-      "City":             i.city || "-",
-      "State":            i.state || "-",
-      "Status":           i.status || "-",
-      "Total Defects":    defs.length,
-      "Resolved":         resolved,
-      "Resolution Rate":  `${rate}%`,
-    };
-  });
+    const inspectionRows = inspections.map((i, idx) => {
+      const defs = i.defects || [];
+      const resolved = defs.filter(d => d.status === "Resolved").length;
+      const rate = defs.length > 0 ? Math.round((resolved / defs.length) * 100) : 0;
+      return {
+        "No":              idx + 1,
+        "Title":           i.title || "-",
+        "Client":          i.client || "-",
+        "Inspector":       i.inspector || "-",
+        "Date":            i.date || "-",
+        "Property Type":   i.propertyType || "-",
+        "City":            i.city || "-",
+        "State":           i.state || "-",
+        "Status":          i.status || "-",
+        "Total Defects":   defs.length,
+        "Resolved":        resolved,
+        "Resolution Rate": `${rate}%`,
+      };
+    });
 
-  // Sheet 2 — Defects Detail
-  const defectRows = [];
-  inspections.forEach(i => {
-    const defs = i.defects || [];
-    defs.forEach((d, idx) => {
-      defectRows.push({
-        "No":            idx + 1,
-        "Inspection":    i.title || "-",
-        "Client":        i.client || "-",
-        "Date":          i.date || "-",
-        "Location":      d.location || "-",
-        "Element":       d.element || "-",
-        "Defect Type":   d.defectType || d.category || "-",
-        "Category":      d.category || "-",
-        "Severity":      d.severity || "-",
-        "Status":        d.status || "-",
-        "Description":   d.description || "-",
+    const defectRows = [];
+    inspections.forEach(i => {
+      const defs = i.defects || [];
+      defs.forEach((d, idx) => {
+        defectRows.push({
+          "No":          idx + 1,
+          "Inspection":  i.title || "-",
+          "Client":      i.client || "-",
+          "Date":        i.date || "-",
+          "Location":    d.location || "-",
+          "Element":     d.element || "-",
+          "Defect Type": d.defectType || d.category || "-",
+          "Category":    d.category || "-",
+          "Severity":    d.severity || "-",
+          "Status":      d.status || "-",
+          "Description": d.description || "-",
+        });
       });
     });
-  });
 
-  // Create workbook
-  const wb = window.XLSX.utils.book_new();
-
-  const ws1 = window.XLSX.utils.json_to_sheet(inspectionRows);
-  window.XLSX.utils.book_append_sheet(wb, ws1, "Inspections");
-
-  const ws2 = window.XLSX.utils.json_to_sheet(defectRows);
-  window.XLSX.utils.book_append_sheet(wb, ws2, "Defects");
-
-  // Download
-  const date = new Date().toISOString().split("T")[0];
-  window.XLSX.writeFile(wb, `Benamora_Report_${date}.xlsx`);
-};
+    const wb = XLSX.utils.book_new();
+    const ws1 = XLSX.utils.json_to_sheet(inspectionRows);
+    XLSX.utils.book_append_sheet(wb, ws1, "Inspections");
+    const ws2 = XLSX.utils.json_to_sheet(defectRows);
+    XLSX.utils.book_append_sheet(wb, ws2, "Defects");
+    const date = new Date().toISOString().split("T")[0];
+    XLSX.writeFile(wb, `Benamora_Report_${date}.xlsx`);
+  };
 
   return (
     <div style={{ background:"transparent", minHeight:"100vh", paddingBottom:40 }}>
@@ -97,7 +91,7 @@ export default function AllInspections({ inspections, loading, nav, goDetail, is
             <div style={{ fontSize:13, color:"rgba(255,255,255,0.4)", letterSpacing:0.5 }}>{filtered.length} of {inspections.length} records</div>
           </div>
           <div style={{ display:"flex", gap:8 }}>
-            <button onClick={exportToExcel} style={{ padding:"11px 20px", background:white, color:black, border:`1px solid ${gold}`, fontWeight:700, fontSize:11, cursor:"pointer", fontFamily:"inherit", letterSpacing:1, textTransform:"uppercase" }}>
+            <button onClick={exportToExcel} style={{ padding:"11px 16px", background:"rgba(255,255,255,0.1)", color:white, border:`1px solid ${gold}`, fontWeight:700, fontSize:11, cursor:"pointer", fontFamily:"inherit", letterSpacing:1, textTransform:"uppercase" }}>
               Export Excel
             </button>
             <button onClick={()=>nav("new")} style={{ padding:"11px 20px", background:gold, color:white, border:"none", fontWeight:700, fontSize:11, cursor:"pointer", fontFamily:"inherit", letterSpacing:1.5, textTransform:"uppercase" }}>
