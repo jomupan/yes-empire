@@ -5,7 +5,7 @@ import Card from "../components/Card";
 import Pill from "../components/Pill";
 import EmptyState from "../components/EmptyState";
 
-export default function AllInspections({ inspections, loading, nav, goDetail, isLaptop }) {
+export default function AllInspections({ inspections, loading, nav, goDetail, isLaptop, isAdmin }) {
   const [search,   setSearch]   = useState("");
   const [stFilter, setStFilter] = useState("All");
 
@@ -91,9 +91,11 @@ export default function AllInspections({ inspections, loading, nav, goDetail, is
             <div style={{ fontSize:13, color:"rgba(255,255,255,0.4)", letterSpacing:0.5 }}>{filtered.length} of {inspections.length} records</div>
           </div>
           <div style={{ display:"flex", gap:8 }}>
-            <button onClick={exportToExcel} style={{ padding:"11px 16px", background:"rgba(255,255,255,0.1)", color:white, border:`1px solid ${gold}`, fontWeight:700, fontSize:11, cursor:"pointer", fontFamily:"inherit", letterSpacing:1, textTransform:"uppercase" }}>
-              Export Excel
-            </button>
+            {isAdmin === true && (
+              <button onClick={exportToExcel} style={{ padding:"11px 16px", background:"rgba(255,255,255,0.1)", color:white, border:`1px solid ${gold}`, fontWeight:700, fontSize:11, cursor:"pointer", fontFamily:"inherit", letterSpacing:1, textTransform:"uppercase" }}>
+                Export Excel
+              </button>
+              )}
             <button onClick={()=>nav("new")} style={{ padding:"11px 20px", background:gold, color:white, border:"none", fontWeight:700, fontSize:11, cursor:"pointer", fontFamily:"inherit", letterSpacing:1.5, textTransform:"uppercase" }}>
               + New
             </button>

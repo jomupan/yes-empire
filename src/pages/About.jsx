@@ -85,19 +85,15 @@ export default function About({ nav, isLaptop }) {
                         <div style={{ background:white, padding:"24px 20px", marginBottom:1 }}>
                             <div style={{ fontSize:11, fontWeight:700, color:sub, letterSpacing:1.5, textTransform:"uppercase", marginBottom:16 }}>Contact Us</div>
                             <div style={{ display:"grid", gridTemplateColumns: isLaptop?"1fr 1fr":"1fr", gap:12 }}>
-                                <a href="tel:+60103676007" style={{ display:"flex", alignItems:"center", gap:14, padding:"16px", background:iosBg, textDecoration:"none", borderLeft:'3px solid ${gold}' }}>
-                                    <div style={{ width:40, height:40, background:'${gold}20', display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>📞</div>
-                                    <div>
-                                        <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:3 }}>Phone</div>
-                                        <div style={{ fontSize:14, color:txt, fontWeight:600 }}>+60 10 - 367 6007</div>
-                                    </div>
+                                <a href="tel:+60103676007" style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:8, padding:"20px", background:iosBg, textDecoration:"none", borderTop:`3px solid ${gold}`, textAlign:"center" }}>
+                                    <div style={{ fontSize:28 }}>📞</div>
+                                    <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5 }}>Phone</div>
+                                    <div style={{ fontSize:14, color:txt, fontWeight:700 }}>+60 10 - 367 6007</div>
                                 </a>
-                                <a href="mailto:benamorahq@gmail.com" style={{ display:"flex", alignItems:"center", gap:14, padding:"16px", background:iosBg, textDecoration:"none", borderLeft:'3px solid ${gold}' }}>
-                                    <div style={{ width:40, height:40, background:'${gold}20', display:"flex", alignItems:"center", justifyContent:"center", fontSize:18, flexShrink:0 }}>📧</div>
-                                    <div>
-                                        <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5, marginBottom:3 }}>Email</div>
-                                        <div style={{ fontSize:14, color:txt, fontWeight:600 }}>benamorahq@gmail.com</div>
-                                    </div>
+                                <a href="mailto:benamorahq@gmail.com" style={{ display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center", gap:8, padding:"20px", background:iosBg, textDecoration:"none", borderTop:`3px solid ${gold}`, textAlign:"center" }}>
+                                    <div style={{ fontSize:28 }}>📧</div>
+                                    <div style={{ fontSize:11, color:sub, fontWeight:600, textTransform:"uppercase", letterSpacing:0.5 }}>Email</div>
+                                    <div style={{ fontSize:14, color:txt, fontWeight:700 }}>benamorahq@gmail.com</div>
                                 </a>
                             </div>
                         </div>

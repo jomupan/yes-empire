@@ -1,14 +1,19 @@
 import { black, gold, white, txt, sub, iosBg, iosSep } from "../config";
 
-const NAV = [
-  { label:"Dashboard",      key:"dashboard"  },
-  { label:"New Inspection",  key:"new"       },
-  { label:"All Inspections", key:"list"      },
-  { label:"Reports",         key:"reports"   },
-  { label:"Analytics",       key:"analytics" },
-  { label:"Staff",           key:"staff"     },
-  { label:"About",           key:"about"     },
-];
+const getNav = (role) => {
+  const base = [
+    { label:"Dashboard",      key:"dashboard" },
+    { label:"New Inspection",  key:"new"      },
+    { label:"All Inspections", key:"list"     },
+    { label:"Reports",         key:"reports"  },
+    { label:"About",           key:"about"    },
+  ];
+  const adminOnly = [
+    { label:"Analytics", key:"analytics" },
+    { label:"Staff",     key:"staff"     },
+  ];
+  return role === "Admin" ? [...base, ...adminOnly] : base;
+};
 
 export default function BottomNav({ page, nav, user, logout, open, setOpen, isLaptop }) {
 
@@ -60,7 +65,7 @@ export default function BottomNav({ page, nav, user, logout, open, setOpen, isLa
 
       {/* NAV */}
       <nav style={{ flex:1, padding:"16px 12px", overflowY:"auto" }}>
-        {NAV.map(item => {
+        {getNav(user?.role).map(item => {
           const active = page === item.key;
           return (
             <button key={item.key} onClick={()=>nav(item.key)} style={{

@@ -133,7 +133,7 @@ export default function App() {
     switch(page) {
       case "dashboard": return <Dashboard inspections={inspections} loading={loading} nav={nav} goDetail={goDetail} user={user} logout={logout} isLaptop={isLaptop}/>;
       case "new":       return <NewInspection nav={nav} setSelId={setSelId} isLaptop={isLaptop}/>;
-      case "list":      return <AllInspections inspections={inspections} loading={loading} nav={nav} goDetail={goDetail} isLaptop={isLaptop}/>;
+      case "list": return <AllInspections inspections={inspections} loading={loading} nav={nav} goDetail={goDetail} isLaptop={isLaptop} isAdmin={user?.role==="Admin"}/>;
       case "detail":    return <Detail inspections={inspections} selId={selId} nav={nav} setReportId={setReportId} isLaptop={isLaptop}/>;
       case "reports":   return <Reports inspections={inspections} loading={loading} reportId={reportId} setReportId={setReportId} nav={nav} isLaptop={isLaptop}/>;
       case "profile":   return <Profile user={user} nav={nav} onUpdateUser={handleUpdateUser} isLaptop={isLaptop}/>;
