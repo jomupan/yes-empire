@@ -211,6 +211,8 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
             * { box-sizing: border-box; margin: 0; padding: 0; }
             body { font-family: Arial, sans-serif; background: white; }
             @page { size: A4; margin: 10mm; }
+            .no-print { position: fixed; top: 16px; right: 16px; z-index: 999; display: flex; gap: 10px; }
+            @media print { .no-print { display: none !important; } }
             .cover { padding: 20px; page-break-after: always; }
             .cover-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #000; padding-bottom: 16px; margin-bottom: 16px; }
             .cover-logo { width: 120px; height: 48px; object-fit: contain; }
@@ -244,6 +246,16 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
           </style>
         </head>
         <body>
+          <!-- BUTTONS -->
+          <div class="no-print">
+            <button onclick="window.print()" style="padding:10px 20px;background:#F07C1E;color:white;border:none;font-weight:700;font-size:13px;cursor:pointer;font-family:Arial;border-radius:4px">
+              🖨️ Print
+            </button>
+            <button onclick="window.close()" style="padding:10px 20px;background:#000;color:white;border:none;font-weight:700;font-size:13px;cursor:pointer;font-family:Arial;border-radius:4px">
+              ✕ Close
+            </button>
+          </div>
+
           <div class="cover">
             <div class="cover-header">
               <img class="cover-logo" src="${window.location.origin}/BENAMORA.jpeg" alt="Benamora"/>
