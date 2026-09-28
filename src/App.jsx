@@ -22,7 +22,7 @@ const slideStyle = {
 };
 
 export default function App() {
-  const [page,        setPage]        = useState("dashboard");
+  const [page,        setPage]        = useState(localStorage.getItem("current_page") || "dashboard");
   const [inspections, setInspections] = useState([]);
   const [loading,     setLoading]     = useState(true);
   const [selId,       setSelId]       = useState(null);
@@ -74,6 +74,7 @@ export default function App() {
     setPage(p);
     setAnimKey(k => k + 1);
     setMenuOpen(false);
+    localStorage.setItem("current_page", p);
   };
 
   const goDetail = (id) => {

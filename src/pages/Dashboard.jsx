@@ -117,7 +117,7 @@ export default function Dashboard({ inspections, loading, nav, goDetail, user, i
 
         <button onClick={()=>nav("new")} style={{
           marginTop:16, width:"100%", padding:"16px",
-          background:black, color:white, border:"none",
+          background:gold, color:white, border:"none",
           fontWeight:700, fontSize:13, cursor:"pointer",
           fontFamily:"inherit", letterSpacing:1.5, textTransform:"uppercase",
         }}>

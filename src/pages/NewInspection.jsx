@@ -184,7 +184,7 @@ export default function NewInspection({ nav, setSelId, isLaptop }) {
           <button onClick={()=>nav("dashboard")} style={{ flex:1, padding:"15px", background:white, color:sub, border:"none", fontWeight:600, fontSize:13, cursor:"pointer", fontFamily:"inherit", letterSpacing:0.5 }}>
             Cancel
           </button>
-          <button onClick={handleSubmit} disabled={saving} style={{ flex:2, padding:"15px", background:black, color:white, border:"none", fontWeight:700, fontSize:13, cursor:"pointer", fontFamily:"inherit", letterSpacing:1, textTransform:"uppercase", opacity:saving?0.7:1 }}>
+          <button onClick={handleSubmit} disabled={saving} style={{ flex:2, padding:"15px", background:gold, color:white, border:"none", fontWeight:700, fontSize:13, cursor:"pointer", fontFamily:"inherit", letterSpacing:1, textTransform:"uppercase", opacity:saving?0.7:1 }}>
             {saving ? "Saving..." : "Save & Continue"}
           </button>
         </div>

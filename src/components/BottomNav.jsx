@@ -86,17 +86,6 @@ export default function BottomNav({ page, nav, user, logout, open, setOpen, isLa
 
       {/* BOTTOM */}
       <div style={{ padding:"16px 24px 32px", borderTop:"1px solid rgba(255,255,255,0.08)", display:"flex", flexDirection:"column", gap:8 }}>
-        <button onClick={()=>{ nav("profile"); if(!isLaptop) setOpen(false); }} style={{
-          width:"100%", padding:"13px",
-          background:"rgba(255,255,255,0.06)",
-          border:"1px solid rgba(255,255,255,0.1)",
-          borderRadius:14, color:"rgba(255,255,255,0.6)",
-          cursor:"pointer", fontFamily:"inherit",
-          fontSize:14, fontWeight:600,
-          display:"flex", alignItems:"center", gap:8,
-        }}>
-         My Profile
-        </button>
         <button onClick={()=>{ logout(); setOpen(false); }} style={{
           width:"100%", padding:"13px",
           background:"#FF3B3015", border:"none",
