@@ -249,7 +249,7 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
           <!-- BUTTONS -->
           <div class="no-print">
             <button onclick="window.print()" style="padding:10px 20px;background:#F07C1E;color:white;border:none;font-weight:700;font-size:13px;cursor:pointer;font-family:Arial;border-radius:4px">
-              🖨️ Print
+               Print
             </button>
             <button onclick="window.close()" style="padding:10px 20px;background:#000;color:white;border:none;font-weight:700;font-size:13px;cursor:pointer;font-family:Arial;border-radius:4px">
               ✕ Close
