@@ -22,7 +22,7 @@ const slideStyle = {
 };
 
 export default function App() {
-  const [page,        setPage]        = useState(localStorage.getItem("current_page") || "dashboard");
+  const [page,        setPage]        = useState("dashboard");
   const [inspections, setInspections] = useState([]);
   const [loading,     setLoading]     = useState(true);
   const [selId,       setSelId]       = useState(null);

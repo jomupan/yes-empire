@@ -55,6 +55,7 @@ export default function useAuth() {
   const logout = () => {
     setUser(null);
     localStorage.removeItem(REMEMBER_KEY);
+    localStorage.removeItem("current_page");
   };
 
   return { user, setUser, loading, validatePin, completeLogin, logout };
