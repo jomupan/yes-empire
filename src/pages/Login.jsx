@@ -100,7 +100,7 @@ export default function Login({ onValidate, onComplete }) {
         <div style={{ position:"fixed", inset:0, zIndex:0, background:"rgba(0,0,0,0.65)" }}/>
 
         <div style={{ textAlign:"center", animation:"welcomeIn 0.5s cubic-bezier(0.25,0.46,0.45,0.94)", width:"100%", maxWidth:320, margin:"0 auto", position:"relative", zIndex:1 }}>
-          <div style={{ marginBottom:24 }}>
+          <div style={{ marginBottom:24, display:"flex", justifyContent:"center" }}>
             <Avatar user={welcome} size={100}/>
           </div>
           <div style={{ color:"rgba(255,255,255,0.4)", fontSize:13, marginBottom:10, fontWeight:500, letterSpacing:1, textTransform:"uppercase" }}>
