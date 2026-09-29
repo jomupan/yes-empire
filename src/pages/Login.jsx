@@ -86,7 +86,7 @@ export default function Login({ onValidate, onComplete }) {
         alignItems:"center", justifyContent:"center",
         fontFamily:"'Inter',-apple-system,sans-serif",
         padding:"24px", width:"100%",
-        boxSizing:"border-box", position:"relative",
+        boxSizing:"border-box", position:"relative", textAlign:"center",
       }}>
         {/* BLURRED BACKGROUND */}
         <div style={{
@@ -99,7 +99,7 @@ export default function Login({ onValidate, onComplete }) {
         }}/>
         <div style={{ position:"fixed", inset:0, zIndex:0, background:"rgba(0,0,0,0.65)" }}/>
 
-        <div style={{ textAlign:"center", animation:"welcomeIn 0.4s cubic-bezier(0.25,0.46,0.45,0.94)", width:"100%", maxWidth:320, margin:"0 auto", position:"relative", zIndex:1 }}>
+        <div style={{ textAlign:"center", animation:"welcomeIn 0.4s cubic-bezier(0.25,0.46,0.45,0.94)", width:"100%", maxWidth:400, margin:"0 auto", position:"relative", zIndex:1 }}>
           <div style={{ marginBottom:24, display:"flex", justifyContent:"center" }}>
             <Avatar user={welcome} size={100}/>
           </div>
