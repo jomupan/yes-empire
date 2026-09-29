@@ -387,7 +387,7 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
                 <div style={{ fontSize:11, color:sub, marginTop:2 }}>{ri.date}</div>
               </div>
             </div>
-            <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:0 }}>
+            <div style={{ display:"flex", flexDirection:"column" }}>
               {[
                 {l:"Project Title", v:ri.title},
                 {l:"Client Name",   v:ri.client},
@@ -396,12 +396,12 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
                 {l:"Address",       v:`${ri.address}, ${ri.postcode}`},
                 {l:"City / State",  v:`${ri.city}, ${ri.state}`},
               ].map((r,i)=>(
-                <div key={r.l} style={{ padding:"10px 0", borderBottom:"1px solid #E5E5EA", display:"flex", gap:12 }}>
-                  <div style={{ fontSize:11, fontWeight:700, color:sub, letterSpacing:0.5, textTransform:"uppercase", minWidth:120 }}>{r.l}</div>
-                  <div style={{ fontSize:13, color:txt }}>: {r.v}</div>
-                </div>
-              ))}
+            <div key={r.l} style={{ padding:"10px 0", borderBottom:"1px solid #E5E5EA", display:"flex", gap:12 }}>
+              <div style={{ fontSize:11, fontWeight:700, color:sub, letterSpacing:0.5, textTransform:"uppercase", minWidth:110, flexShrink:0 }}>{r.l}</div>
+              <div style={{ fontSize:13, color:txt, flex:1 }}>: {r.v}</div>
             </div>
+          ))}
+        </div>
           </div>
 
           {/* SUMMARY */}
@@ -440,7 +440,7 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
             ) : (
               <div>
                 {defGroups.map((group, pageIdx) => (
-                  <div key={pageIdx} style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:1, background:"rgba(0,0,0,0.2)", marginBottom:1 }}>
+                  <div key={pageIdx} style={{ display:"grid", gridTemplateColumns: isLaptop?"1fr 1fr":"1fr", gap:1, background:"rgba(0,0,0,0.2)", marginBottom:1 }}>
                     {group.map((d) => {
                       const photos  = getDefectPhotos(d);
                       const defNum  = def.indexOf(d) + 1;
@@ -477,7 +477,7 @@ export default function Reports({ inspections, loading, reportId, setReportId, n
                             {photos.length>0&&(
                               <div>
                                 <div style={{ fontSize:9, fontWeight:700, color:sub, letterSpacing:1, textTransform:"uppercase", marginBottom:6 }}>Photos</div>
-                                <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:4 }}>
+                                <div style={{ display:"grid", gridTemplateColumns: isLaptop?"1fr 1fr":"1fr", gap:4 }}>
                                   {photos.slice(0,2).map((p,pi)=>(
                                     <div key={pi} style={{ aspectRatio:"4/3", overflow:"hidden", border:"1px solid #E5E5EA" }}>
                                       <img src={p} alt={`Photo ${pi+1}`} style={{ width:"100%", height:"100%", objectFit:"cover" }}/>
