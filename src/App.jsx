@@ -18,7 +18,7 @@ import useAuth from "./hooks/useAuth";
 import { gold, black } from "./config";
 
 const slideStyle = {
-  animation: "slideUp 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
+  animation: "slideUp 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards",
 };
 
 export default function App() {
