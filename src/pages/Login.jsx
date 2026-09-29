@@ -81,13 +81,25 @@ export default function Login({ onValidate, onComplete }) {
   if (welcome) {
     return (
       <div style={{
-        minHeight:"100vh", background:black,
+        minHeight:"100vh",
         display:"flex", flexDirection:"column",
         alignItems:"center", justifyContent:"center",
         fontFamily:"'Inter',-apple-system,sans-serif",
-        padding:"24px",
+        padding:"24px", width:"100%",
+        boxSizing:"border-box", position:"relative",
       }}>
-        <div style={{ textAlign:"center", animation:"welcomeIn 0.5s cubic-bezier(0.25,0.46,0.45,0.94)" }}>
+        {/* BLURRED BACKGROUND */}
+        <div style={{
+          position:"fixed", inset:0, zIndex:0,
+          backgroundImage:"url('/house_bg.jpeg')",
+          backgroundSize:"cover",
+          backgroundPosition:"center",
+          filter:"blur(6px)",
+          transform:"scale(1.05)",
+        }}/>
+        <div style={{ position:"fixed", inset:0, zIndex:0, background:"rgba(0,0,0,0.65)" }}/>
+
+        <div style={{ textAlign:"center", animation:"welcomeIn 0.5s cubic-bezier(0.25,0.46,0.45,0.94)", width:"100%", maxWidth:320, margin:"0 auto", position:"relative", zIndex:1 }}>
           <div style={{ marginBottom:24 }}>
             <Avatar user={welcome} size={100}/>
           </div>
